@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ipdr="http://www.ipdr.org/namespaces/ipdr"
+    xmlns:tdaf="http://schemas.tdaf.telefonica.com/accounting" xmlns="http://schemas.tdaf.telefonica.com/is-ipdr/1.0"
+    targetNamespace="http://schemas.tdaf.telefonica.com/is-ipdr/1.0" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+
+    <xs:import namespace="http://www.ipdr.org/namespaces/ipdr" schemaLocation="IPDRDoc3.5.1.xsd"/>
+    <xs:import namespace="http://schemas.tdaf.telefonica.com/accounting" schemaLocation="PDITypes.xsd"/>
+
+    <xs:complexType name="IPDR_Type">
+        <xs:annotation>
+            <xs:documentation>Base IPDR type, used for event driven billable items. </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ipdr:IPDRType">
+                <xs:sequence>
+                    <xs:element name="Data" type="DataSeqType" minOccurs="0"/>
+                    <xs:element name="QoS" type="tdaf:QoSSvaType" minOccurs="0"/>
+                    <xs:element name="Internal" type="tdaf:internalSVAType" minOccurs="0"/>
+                </xs:sequence>
+                <xs:anyAttribute namespace="##any" processContents="lax"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="DataSeqType">
+        <xs:sequence>
+            <xs:element name="Entry" type="EntryType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="EntryType">
+        <xs:sequence>
+            <xs:element name="Guid" type="GUID_Type"/>
+            <xs:element name="Concept" type="Concept_Type"/>
+            <xs:element name="Event" type="Event_Type" minOccurs="0"/>
+            <xs:element name="Time" type="xs:dateTime"/>
+            <xs:choice minOccurs="0">
+                <xs:element name="VM" type="VM_Type"/>
+                <xs:element name="License" type="License_Type"/>
+                <xs:element name="Net" type="Traffic_Type"/>
+                <xs:element name="Vpn" type="Traffic_Type"/>
+                <xs:element name="Backup" type="Backup_Type"/>
+                <xs:element name="Operation" type="Operations_Type"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="VM_Type">
+        <xs:annotation>
+            <xs:documentation>Specialized type for VM</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Cpu" type="xs:int"/>
+            <xs:element name="Ram" type="xs:int"/>
+            <xs:element name="Size" type="Size_Type"/>
+            <xs:element name="Element" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="License_Type">
+        <xs:annotation>
+            <xs:documentation/>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Licencse" type="xs:string"/>
+            <xs:element name="Product" type="xs:string"/>
+            <xs:element name="Vendor" type="xs:string"/>
+            <xs:element name="Version" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Traffic_Type">
+        <xs:annotation>
+            <xs:documentation/>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Duration" type="xs:duration"/>
+            <xs:element name="Uplink" type="xs:decimal"/>
+            <xs:element name="Downlink" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Backup_Type">
+        <xs:annotation>
+            <xs:documentation/>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Duration" type="xs:duration"/>
+            <xs:element name="Size" type="xs:decimal"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Operations_Type">
+        <xs:annotation>
+            <xs:documentation>Specialized type for Operations. Counts the number of operations per type per period of time</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Duration" type="xs:duration">
+                <xs:annotation>
+                    <xs:documentation>The time interval is specified in the following form "PnYnMnDTnHnMnS" where: P indicates the period (required)
+                        nY indicates the number of years nM indicates the number of months nD indicates the number of days T indicates the start of a
+                        time section (required if you are going to specify hours, minutes, or seconds) nH indicates the number of hours nM indicates
+                        the number of minutes nS indicates the number of seconds</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Count" type="xs:int"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="Concept_Type">
+        <xs:annotation>
+            <xs:documentation>Billable Concepts</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="VM"/>
+            <xs:enumeration value="Net"/>
+            <xs:enumeration value="NetTraffic"/>
+            <xs:enumeration value="VPNTraffic"/>
+            <xs:enumeration value="License"/>
+            <xs:enumeration value="Operation"/>
+            <xs:enumeration value="Backup"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Event_Type">
+        <xs:annotation>
+            <xs:documentation>Events</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="create"/>
+            <xs:enumeration value="update"/>
+            <xs:enumeration value="stop"/>
+            <xs:enumeration value="destroy"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="GUID_Type">
+        <xs:annotation>
+            <xs:documentation>GUID format: 014DEC6E84000000</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-F0-9]{16}|[a-f0-9]{16}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Size_Type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="XS"/>
+            <xs:enumeration value="S"/>
+            <xs:enumeration value="M"/>
+            <xs:enumeration value="L"/>
+            <xs:enumeration value="XL"/>
+            <xs:enumeration value="XXL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

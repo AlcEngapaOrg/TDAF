@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<schema targetNamespace="http://schemas.tdaf.telefonica.com/accounting" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:tdaf="http://schemas.tdaf.telefonica.com/accounting" xmlns:ipdr="http://www.ipdr.org/namespaces/ipdr">
+
+	<!--TIPOS BASICOS-->
+	<simpleType name="simpleDateTimeNoSpaceType">
+		<annotation>
+			<documentation>Formato de fecha y hora sin espacios con milisegundos opcionales: YYYYMMDDHHMMSS[ZZZZ]</documentation>
+		</annotation>
+		<restriction base="string">
+			<pattern value="([0-9]{4}((0[1-9])|(1[0-2]))((0[1-9])|([1-2][0-9])|(3[0-1]))((0[0-9]|1[0-9]|2[0-3])[0-5][0-9][0-5][0-9]))([0-9]{4})?"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="simpleDateType">
+		<annotation>
+			<documentation>Formato de fecha: DD/MM/YYYY</documentation>
+		</annotation>
+		<restriction base="string">
+			<pattern value="((0[1-9])|([1-2][0-9])|(3[0-1]))/((0[1-9])|(1[0-2]))/[0-9]{4}"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="simpleDateTimeType">
+		<annotation>
+			<documentation>Formato de fecha y hora: DD/MM/YYYY HH:MM:SS</documentation>
+		</annotation>
+		<restriction base="string">
+			<pattern value="((0[1-9])|([1-2][0-9])|(3[0-1]))/((0[1-9])|(1[0-2]))/[0-9]{4} ((0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="simpleTimeType">
+		<annotation>
+			<documentation>Formato de hora: HH:MM:SS</documentation>
+		</annotation>
+		<restriction base="string">
+			<pattern value="((0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9])"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="emailAddressType">
+		<annotation>
+			<documentation>Formato de cuenta de correo: destination@emailServer</documentation>
+		</annotation>
+		<restriction base="string">
+			<maxLength value="256"/>
+			<whiteSpace value="collapse"/>
+			<pattern value="[^@]+@[^.]+\..+"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="ipAddressType">
+		<annotation>
+			<documentation>Formato de dirección IP: [0-255].[0-255].[0-255].[0-255]</documentation>
+		</annotation>
+		<restriction base="string">
+			<pattern
+				value="(([0-9])|([1-9][0-9])|((1[0-9][0-9])|(2[0-4][0-9])|25[0-5]))\.(([0-9])|([1-9][0-9])|((1[0-9][0-9])|(2[0-4][0-9])|25[0-5]))\.(([0-9])|([1-9][0-9])|((1[0-9][0-9])|(2[0-4][0-9])|25[0-5]))\.(([0-9])|([1-9][0-9])|((1[0-9][0-9])|(2[0-4][0-9])|25[0-5]))"
+			/>
+		</restriction>
+	</simpleType>
+	<simpleType name="returnCodeType">
+		<annotation>
+			<documentation>Resultado producido por una operación. El valor podrá ser cualquier número con valores negativos o positivos sin
+				restricción de tamaño</documentation>
+		</annotation>
+		<restriction base="string">
+			<pattern value="-?[0-9]*"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="shortNumberType">
+		<annotation>
+			<documentation>Número corto de cuatro dígitos de un servicio, tipicamente usado para el envío de mensajes cortos</documentation>
+		</annotation>
+		<restriction base="string">
+			<maxLength value="4"/>
+			<pattern value="[0-9]*"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="msisdnType">
+		<annotation>
+			<documentation>Número A</documentation>
+		</annotation>
+		<restriction base="string">
+			<maxLength value="16"/>
+			<pattern value="\+?[0-9]*"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="imsiType">
+		<annotation>
+			<documentation>Numero de telefono en formato internacional</documentation>
+		</annotation>
+		<restriction base="string">
+			<maxLength value="16"/>
+			<pattern value="[0-9]*"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="providerIdType">
+		<annotation>
+			<documentation>Identificador del Proveedor</documentation>
+		</annotation>
+		<restriction base="string">
+			<maxLength value="4"/>
+			<pattern value="[0-9]*"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="providerNameType">
+		<annotation>
+			<documentation>Nombre del proveedor</documentation>
+		</annotation>
+		<restriction base="string"/>
+	</simpleType>
+	<simpleType name="applicationIdType">
+		<annotation>
+			<documentation>Identificador de una aplicación</documentation>
+		</annotation>
+		<restriction base="string">
+			<maxLength value="4"/>
+			<pattern value="[0-9]*"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="applicationNameType">
+		<annotation>
+			<documentation>Nombre dado a una aplicación</documentation>
+		</annotation>
+		<restriction base="string"/>
+	</simpleType>
+	<simpleType name="categoryIdType">
+		<annotation>
+			<documentation>Identificador de una categoría</documentation>
+		</annotation>
+		<restriction base="string">
+			<pattern value="[0-9]*"/>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="typeContractType">
+		<restriction base="string">
+			<maxLength value="10"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="serviceIdType">
+		<annotation>
+			<documentation>Identificador del servicio</documentation>
+		</annotation>
+		<restriction base="string">
+			<maxLength value="10"/>
+			<pattern value="[0-9]*"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="serviceNameType">
+		<annotation>
+			<documentation>Nombre del servicio</documentation>
+		</annotation>
+		<restriction base="string"/>
+	</simpleType>
+	<simpleType name="userIdType">
+		<annotation>
+			<documentation>Identificador del usuario</documentation>
+		</annotation>
+		<restriction base="string">
+			<maxLength value="19"/>
+			<pattern value="[0-9]*"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="userNameType">
+		<annotation>
+			<documentation>Nombre del usuario</documentation>
+		</annotation>
+		<restriction base="string"/>
+	</simpleType>
+
+	<!--PARAMETROS DE CALIDAD DE SVAs-->
+	<complexType name="technicalParamType">
+		<annotation>
+			<documentation>Mantienen información referente a la actividad propiamente dicha del servicio, siendo por ejemplo valores típicos el número
+				de llamadas realizadas a un servicio, o el número de accesos en un determinado tiempo</documentation>
+		</annotation>
+		<sequence>
+			<element name="value" type="anyType"/>
+			<element name="description" type="string" minOccurs="0"/>
+			<element name="other" type="anyType" minOccurs="0"/>
+		</sequence>
+		<attribute name="technicalParamId" type="string" use="required">
+			<annotation>
+				<documentation>Identificador del parámetro técnico usado para diferenciarlo de los demás parámetros definidos en la
+					plataforma</documentation>
+			</annotation>
+		</attribute>
+	</complexType>
+	<complexType name="businessParamType">
+		<annotation>
+			<documentation>Mantienen información referente al uso que se está haciendo del servicio por parte de los clientes y resultados
+				obtenidos.</documentation>
+		</annotation>
+		<sequence>
+			<element name="value" type="anyType"/>
+			<element name="description" type="string" minOccurs="0"/>
+			<element name="other" type="anyType" minOccurs="0"/>
+		</sequence>
+		<attribute name="businessParamId" type="string" use="required">
+			<annotation>
+				<documentation>Identificador del parámetro de negocio usado para diferenciarlo de los demás parámetros definidos en la
+					plataforma</documentation>
+			</annotation>
+		</attribute>
+	</complexType>
+	<complexType name="satisfactionCustomerParamType">
+		<annotation>
+			<documentation>Mantienen información referente a la visión que tienen los usuarios del servicio.</documentation>
+		</annotation>
+		<sequence>
+			<element name="value" type="anyType"/>
+			<element name="description" type="string" minOccurs="0"/>
+			<element name="other" type="anyType" minOccurs="0"/>
+		</sequence>
+		<attribute name="satisfactionCustomerParamId" type="string" use="required">
+			<annotation>
+				<documentation>Identificador del parámetro de satisfacción del cliente usado para diferenciarlo de los demás parámetros definidos en
+					la plataforma</documentation>
+			</annotation>
+		</attribute>
+	</complexType>
+	<complexType name="customerCareParamType">
+		<annotation>
+			<documentation>Mantienen información de las quejas y reclamaciones que pudieran crear los usuarios por la utilización de los
+				servicios.</documentation>
+		</annotation>
+		<sequence>
+			<element name="value" type="anyType"/>
+			<element name="description" type="string" minOccurs="0"/>
+			<element name="other" type="anyType" minOccurs="0"/>
+		</sequence>
+		<attribute name="customerCareParamId" type="string" use="required">
+			<annotation>
+				<documentation>Identificador del parámetro de atención al cliente usado para diferenciarlo de los demás parámetros definidos en la
+					plataforma</documentation>
+			</annotation>
+		</attribute>
+	</complexType>
+	<complexType name="QoSSvaType">
+		<annotation>
+			<documentation>Los parámetros de servicio son aquellas magnitudes que se obtienen mediante medición directa en las distintas plataformas y
+				Sistemas de Gestión involucradas en la prestación de dicho servicio</documentation>
+		</annotation>
+		<all>
+			<element name="technicalParams" minOccurs="0">
+				<annotation>
+					<documentation>Mantienen información referente a la actividad propiamente dicha del servicio, siendo por ejemplo valores típicos
+						el número de llamadas realizadas a un servicio, o el número de accesos en un determinado tiempo</documentation>
+				</annotation>
+				<complexType>
+					<sequence>
+						<element name="technicalParam" type="tdaf:technicalParamType" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="businessParams" minOccurs="0">
+				<annotation>
+					<documentation>Mantienen información referente al uso que se está haciendo del servicio por parte de los clientes y resultados
+						obtenidos.</documentation>
+				</annotation>
+				<complexType>
+					<sequence>
+						<element name="businessParam" type="tdaf:businessParamType" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="satisfactionCustomerParams" minOccurs="0">
+				<annotation>
+					<documentation>Mantienen información referente a la visión que tienen los usuarios del servicio.</documentation>
+				</annotation>
+				<complexType>
+					<sequence>
+						<element name="satisfactionCustomerParam" type="tdaf:satisfactionCustomerParamType" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="customerCareParams" minOccurs="0">
+				<annotation>
+					<documentation>Mantienen información de las quejas y reclamaciones que pudieran crear los usuarios por la utilización de los
+						servicios.</documentation>
+				</annotation>
+				<complexType>
+					<sequence>
+						<element name="customerCareParam" type="tdaf:customerCareParamType" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+		</all>
+	</complexType>
+	<!--OPERACIONES INTERNAS-->
+	<complexType name="internalOperationType">
+		<annotation>
+			<documentation>Operaciones internas que se produzcan dentro del SVA analizado y que como tal pueden interesar a las unidades de negocio u
+				otros consumidores de la información como puedan ser Operación y Mantenimiento(Ej. típicamente, de alta, baja, consulta y modificación
+				de información contenida en base de datos).</documentation>
+		</annotation>
+		<sequence>
+			<element name="codOperation" type="tdaf:internalOperationCodType">
+				<annotation>
+					<documentation>Código de Operación. Este parámetro dependerá de cada función interna. En los casos más habituales será un
+						mnemónico de la operación realizada (ALTA, BAJA, MODIFICACIÓN, etc.)</documentation>
+				</annotation>
+			</element>
+			<element name="source" minOccurs="0">
+				<annotation>
+					<documentation>Origen. Este parámetro dependerá de cada función interna. En los casos más habituales será un mnemónico de la causa
+						de la operación (un alta de un nuevo usuario, un borrado por parte de un administrador, etc).</documentation>
+				</annotation>
+			</element>
+			<element name="destination" type="string" minOccurs="0">
+				<annotation>
+					<documentation>Destino. Este parámetro dependerá de cada función interna. En los casos más habituales será un mnemónico del
+						proceso invocado (Base de datos de clientes, base de datos de servicios, etc)</documentation>
+				</annotation>
+			</element>
+			<element name="duration" type="int" minOccurs="0">
+				<annotation>
+					<documentation>Duración del proceso </documentation>
+				</annotation>
+			</element>
+			<element name="result" type="string" minOccurs="0">
+				<annotation>
+					<documentation>Resultado. Este parámetro dependerá de cada función interna. Habitualmente constará de un simple _OK_ o un código
+						de error propio del mismo.</documentation>
+				</annotation>
+			</element>
+			<element name="description" type="string" minOccurs="0">
+				<annotation>
+					<documentation>Descripción. Mostrará una breve descripción de la operación interna realizada.</documentation>
+				</annotation>
+			</element>
+		</sequence>
+		<attribute name="id" type="ID" use="required"/>
+		<attribute name="idRef" type="IDREF" use="optional"/>
+		<attribute name="timestamp" type="dateTime" use="required"/>
+	</complexType>
+	<complexType name="alertType">
+		<annotation>
+			<documentation>Alarmas producidas por fallos o caídas del servicio</documentation>
+		</annotation>
+		<sequence>
+			<element name="error" type="tdaf:errorType">
+				<annotation>
+					<documentation>Código de error</documentation>
+				</annotation>
+			</element>
+			<element name="severity" type="string">
+				<annotation>
+					<documentation>Severidad del error</documentation>
+				</annotation>
+			</element>
+			<element name="result" type="string">
+				<annotation>
+					<documentation>Resultado</documentation>
+				</annotation>
+			</element>
+		</sequence>
+		<attribute name="id" type="ID" use="required"/>
+		<attribute name="idRef" type="IDREF" use="optional"/>
+		<attribute name="timestamp" type="dateTime" use="required"/>
+	</complexType>
+	<complexType name="internalSVAType">
+		<annotation>
+			<documentation>Acciones que se producen dentro del SVA (operaciones y alarmas)</documentation>
+		</annotation>
+		<all>
+			<element name="operations" minOccurs="0">
+				<annotation>
+					<documentation>Operaciones internas que se produzcan dentro del SVA analizado y que como tal pueden interesar a las unidades de
+						negocio u otros consumidores de la información como puedan ser Operación y Mantenimiento(Ej. típicamente, de alta, baja,
+						consulta y modificación de información contenida en base de datos).</documentation>
+				</annotation>
+				<complexType>
+					<sequence>
+						<element name="operation" type="tdaf:internalOperationType" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="alerts" minOccurs="0">
+				<annotation>
+					<documentation>Alarmas producidas por fallos o caídas del servicio</documentation>
+				</annotation>
+				<complexType>
+					<sequence>
+						<element name="alert" type="tdaf:alertType" maxOccurs="unbounded"/>
+					</sequence>
+				</complexType>
+			</element>
+		</all>
+	</complexType>
+	<simpleType name="internalOperationCodType">
+		<annotation>
+			<documentation>Tipo operación interna que puede realizar un SVA</documentation>
+		</annotation>
+		<restriction base="string">
+			<enumeration value="POST"/>
+			<enumeration value="DELETE"/>
+			<enumeration value="PUT"/>
+			<enumeration value="GET"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="errorType">
+		<annotation>
+			<documentation>Tipo de error que puede devolver un SVA</documentation>
+		</annotation>
+		<restriction base="string">
+			<enumeration value="DEBUG"/>
+			<enumeration value="WARNING"/>
+			<enumeration value="ERROR"/>
+			<enumeration value="FATAL"/>
+			<enumeration value="INFO"/>
+		</restriction>
+	</simpleType>
+
+</schema>

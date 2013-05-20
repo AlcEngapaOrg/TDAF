@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IPDRDoc xmlns="http://www.ipdr.org/namespaces/ipdr" xmlns:ipdr="http://www.ipdr.org/namespaces/ipdr"
+    xmlns:is="http://schemas.tdaf.telefonica.com/is-ipdr/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://schemas.tdaf.telefonica.com/is-ipdr/1.0 InstantServer.xsd" docId="00000000-0000-0000-0000-000000000000"
+    IPDRRecorderInfo="is-node-london" creationTime="2012-01-22T00:00:00.000Z" version="1.0">
+
+    <IPDR xsi:type="is:IPDR_Type">
+        <IPDRCreationTime>0000-00-00T00:00:00Z</IPDRCreationTime>
+        <seqNum>1</seqNum>
+
+        <is:Data>
+            <is:Entry>
+                <is:Guid>024EBBF92D000104</is:Guid>
+                <is:Concept>VM</is:Concept>
+                <is:Event>create</is:Event>
+                <is:Time>2012-01-22T01:52:00Z</is:Time>
+                <is:VM>
+                    <is:Cpu>4</is:Cpu>
+                    <is:Ram>2</is:Ram>
+                    <is:Size>XL</is:Size>
+                    <is:Element>Machine1</is:Element>
+                </is:VM>
+            </is:Entry>
+            <is:Entry>
+                <is:Guid>024EBBF92D000104</is:Guid>
+                <is:Concept>Net</is:Concept>
+                <is:Event>create</is:Event>
+                <is:Time>2012-01-22T01:52:00Z</is:Time>              
+            </is:Entry>
+            <is:Entry>
+                <is:Guid>024EBBF92D000104</is:Guid>
+                <is:Concept>NetTraffic</is:Concept>
+                <is:Time>2012-01-22T01:52:00Z</is:Time> 
+                <is:Net>
+                    <is:Duration>P5Y</is:Duration>
+                    <is:Uplink>123</is:Uplink>
+                    <is:Downlink>231</is:Downlink>
+                </is:Net>
+            </is:Entry>
+        </is:Data>
+        <is:QoS>
+            <technicalParams xmlns="">
+                <technicalParam technicalParamId="">
+                    <value>Text</value>
+                    <description>String</description>
+                    <other>Text</other>
+                </technicalParam>
+            </technicalParams>
+            <businessParams xmlns="">
+                <businessParam businessParamId="">
+                    <value>Text</value>
+                    <description>String</description>
+                    <other>Text</other>
+                </businessParam>
+            </businessParams>
+            <customerCareParams xmlns="">
+                <customerCareParam customerCareParamId="">
+                    <value>Text</value>
+                    <description>String</description>
+                    <other>Text</other>
+                </customerCareParam>
+            </customerCareParams>
+            <satisfactionCustomerParams xmlns="">
+                <satisfactionCustomerParam satisfactionCustomerParamId="">
+                    <value>Text</value>
+                    <description>String</description>
+                    <other>Text</other>
+                </satisfactionCustomerParam>
+            </satisfactionCustomerParams>
+        </is:QoS>
+        <is:Internal>
+            <operations xmlns="">
+                <operation id="ID000026" timestamp="2001-12-17T09:30:47-05:00">
+                    <codOperation>POST</codOperation>
+                    <destination>String</destination>
+                    <duration>0</duration>
+                    <result>String</result>
+                    <description>String</description>
+                </operation>
+            </operations>
+            <alerts xmlns="">
+                <alert id="ID000027" timestamp="2001-12-17T09:30:47-05:00">
+                    <error>WARNING</error>
+                    <severity>String</severity>
+                    <result>String</result>
+                </alert>
+                <alert id="ID000028" timestamp="2001-12-17T09:30:47-05:00">
+                    <error>ERROR</error>
+                    <severity>String</severity>
+                    <result>String</result>
+                </alert>
+            </alerts>
+        </is:Internal>
+    </IPDR>
+
+    <IPDRDoc.End count="0" endTime="0000-00-00T00:00:00Z"/>
+</IPDRDoc>

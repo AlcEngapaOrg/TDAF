@@ -7,8 +7,8 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <groupId>es.tid.cloud.tdaf.accounting</groupId>
-    <artifactId>filtering</artifactId>
-    
+    <artifactId>data</artifactId>
+
     <dependencies>
         <!-- Managed dependencies -->
         <dependency>
@@ -26,23 +26,13 @@
         <!-- Particular dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-script</artifactId>
+            <artifactId>camel-mongodb</artifactId>
             <version>${camel.version}</version>
         </dependency>
+        <!-- Managed Test Dependencies-->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-csv</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code</groupId>
-            <artifactId>olv-parser</artifactId>
-            <version>2013-01-24</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.tony19</groupId>
-            <artifactId>named-regexp</artifactId>
-            <version>0.1.9</version>
+            <artifactId>camel-test-spring</artifactId>
         </dependency>
     </dependencies>
 </project>
