@@ -1,0 +1,1 @@
+"addFirewallRule",".+CamelHttpUri=http://(?:[\d\.:]+)/i2cm/api/org/(?<orgId>[\w]+)/vdc/(?<vdcId>[\w]+)/fw/(?<fwId>[\w]+)/action/addFirewallRule.+CamelHttpMethod=POST.+Body:<tcloud-ecvdcm:AddFirewallRuleParams.+",""

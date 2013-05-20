@@ -8,17 +8,31 @@
                            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <bean class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
-        <property name="location" value="classpath:filtering.properties"/>
+        <property name="location" value="file:${FILTERING_HOME}/conf/filtering.properties"/>
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="file://D:/Trabajo/Production/Incidencias/20120906"/>
-            <to uri="direct:logFile"/>
+            <from uri="file://D:/Trabajo/Production/Incidencias/20120906?sendEmptyMessageWhenIdle=true"/>
+            <choice>
+                <when>
+                    <simple>${body} != null</simple>
+                    <to uri="direct:logFile"/>
+                </when>
+                <otherwise>
+                    <setBody>
+                        <constant>1</constant>
+                    </setBody>
+                    <bean ref="semaphore" method="release"/>
+                </otherwise>
+            </choice>
         </route>
         
         <route>
             <from uri="direct:logFile"/>
+            <setHeader headerName="log-screen">
+                <javaScript>print("Processing file " + exchange.getIn().getBody().getAbsoluteFilePath() +"\n")</javaScript>
+            </setHeader>
             <split streaming="true">
                 <method ref="logParser" method="iterator"/>
                 <to uri="direct:event"/>
@@ -27,9 +41,21 @@
         
         <route>
             <from uri="direct:event"/>
-            <setHeader headerName="log-screen">
-               <javaScript>print(exchange.getIn().getBody() + "\n")</javaScript>
+            <setHeader headerName="matcher">
+                <method ref="ipdrEntryMatcher" method="matches"/>
             </setHeader>
+            <choice>
+                <when>
+                    <simple>${in.header.matcher} != null</simple>
+                    <to uri="direct:processEntry"/>
+                </when>
+            </choice>
+        </route>
+        
+        <route>
+            <from uri="direct:processEntry"/>
+            <process ref="matches2Headers"/>
+            <process ref="logData2Headers"/>
         </route>
     </camelContext>
     
@@ -37,5 +63,16 @@
         <property name="pattern" value="${log.pattern}"/>
         <property name="dateFormat" value="${log.dateFormat}"/>
         <property name="customLevels" value="${log.customLevels}"/>
+    </bean>
+    <bean id="ipdrIdentifier" class="es.tid.cloud.tdaf.accounting.filtering.IPDREntryIdentifier">
+        <property name="file" value="file:${FILTERING_HOME}/conf/ipdrEntries.csv"/>
+    </bean>
+    <bean id="ipdrEntryMatcher" class="es.tid.cloud.tdaf.accounting.filtering.IPDREntryMatcher">
+        <constructor-arg ref="ipdrIdentifier"/>
+    </bean>
+    <bean id="matches2Headers" class="es.tid.cloud.tdaf.accounting.filtering.processor.Matches2HeadersProcessor"/>
+    <bean id="logData2Headers" class="es.tid.cloud.tdaf.accounting.filtering.processor.LogDataToHeadersProcessor"/>
+    <bean id="semaphore" class="java.util.concurrent.Semaphore">
+        <constructor-arg value="0"/>
     </bean>
 </beans>

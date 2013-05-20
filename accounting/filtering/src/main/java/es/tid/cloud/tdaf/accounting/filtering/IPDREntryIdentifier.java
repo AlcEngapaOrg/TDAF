@@ -14,11 +14,12 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.google.code.regexp.Pattern;
 
-public class IPDREntryIdentification implements InitializingBean {
+public class IPDREntryIdentifier implements InitializingBean {
+    private static final int FLAGS = java.util.regex.Pattern.DOTALL | java.util.regex.Pattern.MULTILINE;
     private File file = null;
-    private Map<String, List<Pattern>> patterns = new LinkedHashMap<String, List<Pattern>>();
+    private Map<String, List<IPRDEntryPattern>> patterns = new LinkedHashMap<String, List<IPRDEntryPattern>>();
 
-    public Map<String, List<Pattern>> getPatterns() {
+    public Map<String, List<IPRDEntryPattern>> getPatterns() {
         return patterns;
     }
 
@@ -40,18 +41,20 @@ public class IPDREntryIdentification implements InitializingBean {
                 }
                 String patternId = null;
                 String patternValue = null;
-                if (row.length < 2) {
+                File template = null;
+                if (row.length > 2) {
                     patternId = row[0];
-                    patternValue = row[2];
+                    patternValue = row[1];
+                    template = new File(row[2]);
                 }
                 if (patternValue == null || patternId == null) {
                     String msg = MessageFormat.format("Error while reading row {0}. The row must have 2 values.", rowCount);
                     throw new RuntimeException(msg);
                 }
-                Pattern pattern = Pattern.compile(patternValue);
-                List<Pattern> ps = this.patterns.get(patternId);
+                IPRDEntryPattern pattern = new IPRDEntryPattern(patternId, Pattern.compile(patternValue, FLAGS), template);
+                List<IPRDEntryPattern> ps = this.patterns.get(patternId);
                 if (ps == null) {
-                    this.patterns.put(patternId, ps = new ArrayList<Pattern>());
+                    this.patterns.put(patternId, ps = new ArrayList<IPRDEntryPattern>());
                 }
                 ps.add(pattern);
             }
