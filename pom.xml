@@ -33,6 +33,7 @@
 
   <dependencyManagement>
     <dependencies>
+        <!-- Dependency Management -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -47,6 +48,13 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
             <version>${camel.version}</version>
+        </dependency>
+        <!-- Test Dependency Management -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring</artifactId>
+            <version>${camel.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
   </dependencyManagement>

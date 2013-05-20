@@ -9,7 +9,7 @@
 
 
     <camelContext xmlns="http://camel.apache.org/schema/spring" id="persist-context">
-        
+
         <route id="persistEventsRoute">
             <from uri="vm:persist-events"/>
             <to uri="mongodb:myDb?database=account&collection=events&amp;operation=save"/>

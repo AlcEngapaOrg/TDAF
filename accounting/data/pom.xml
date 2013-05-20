@@ -29,5 +29,10 @@
             <artifactId>camel-mongodb</artifactId>
             <version>${camel.version}</version>
         </dependency>
+        <!-- Managed Test Dependencies-->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring</artifactId>
+        </dependency>
     </dependencies>
 </project>
