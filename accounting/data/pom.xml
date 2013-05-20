@@ -2,7 +2,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>account</artifactId>
+        <artifactId>accounting</artifactId>
         <groupId>es.tid.cloud.tdaf</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
@@ -24,6 +24,10 @@
             <artifactId>camel-spring</artifactId>
         </dependency>
         <!-- Particular dependencies -->
-        
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-mongodb</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
     </dependencies>
 </project>
