@@ -1,0 +1,38 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>thirdparties</artifactId>
+        <groupId>es.tid.cloud.tdaf</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <groupId>es.tid.cloud.tdaf.thirdparties</groupId>
+    <artifactId>otroslogviewer</artifactId>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.3.1</version>
+                <executions>
+                    <execution>
+                        <id>install-otros</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <file>${basedir}/lib/OtrosLogViewer-app-2013-01-24.jar</file>
+                            <packaging>jar</packaging>
+                            <groupId>com.google.code</groupId>
+                            <artifactId>olv-parser</artifactId>
+                            <version>2013-01-24</version>
+                            <pomFile>${basedir}/src/main/pom/pom-olv.xml</pomFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

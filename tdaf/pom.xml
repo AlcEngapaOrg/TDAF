@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>es.tid.cloud</groupId>
+  <artifactId>tdaf</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  
+  <properties>
+      <jvm.version>1.6</jvm.version>
+      <encoding>UTF-8</encoding>
+
+      <camel.version>2.11.0</camel.version>
+      <spring.version>3.2.2.RELEASE</spring.version>
+  </properties>
+
+  <modules>
+      <module>thirdparties</module>
+      <module>accounting</module>
+  </modules>
+  
+  <build>
+      <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>true</inherited>
+                <executions>
+                    <execution>
+                        <id>compile-project</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <source>${jvm.version}</source>
+                    <target>${jvm.version}</target>
+                    <encoding>${encoding}</encoding>
+                </configuration>
+            </plugin>
+      </plugins>
+  </build>
+</project>

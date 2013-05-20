@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		                   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <bean class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:filtering.properties"/>
+    </bean>
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="file://D:/Trabajo/Production/Incidencias/20120906"/>
+            <to uri="direct:logFile"/>
+        </route>
+        
+        <route>
+            <from uri="direct:logFile"/>
+            <split streaming="true">
+                <method ref="logParser" method="iterator"/>
+                <to uri="direct:event"/>
+            </split>
+        </route>
+        
+        <route>
+            <from uri="direct:event"/>
+            <setHeader headerName="log-screen">
+               <javaScript>print(exchange.getIn().getBody() + "\n")</javaScript>
+            </setHeader>
+        </route>
+    </camelContext>
+    
+    <bean id="logParser" class="es.tid.cloud.tdaf.accounting.filtering.LogParser">
+        <property name="pattern" value="${log.pattern}"/>
+        <property name="dateFormat" value="${log.dateFormat}"/>
+        <property name="customLevels" value="${log.customLevels}"/>
+    </bean>
+</beans>
