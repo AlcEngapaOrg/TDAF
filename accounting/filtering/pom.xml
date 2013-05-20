@@ -30,11 +30,21 @@
             <artifactId>camel-script</artifactId>
             <version>${camel.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-csv</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
         
         <dependency>
             <groupId>com.google.code</groupId>
             <artifactId>olv-parser</artifactId>
             <version>2013-01-24</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.tony19</groupId>
+            <artifactId>named-regexp</artifactId>
+            <version>0.1.9</version>
         </dependency>
     </dependencies>
 </project>
