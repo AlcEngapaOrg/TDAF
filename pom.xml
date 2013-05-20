@@ -4,7 +4,7 @@
   <artifactId>tdaf</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  
+
   <properties>
       <jvm.version>1.6</jvm.version>
       <encoding>UTF-8</encoding>
@@ -17,7 +17,40 @@
       <module>thirdparties</module>
       <module>accounting</module>
   </modules>
-  
+
+  <developers>
+    <developer>
+        <id>alc</id>
+        <email>angellopezcima@gmail.com</email>
+        <name>Angel Lopez Cima</name>
+    </developer>
+    <developer>
+        <id>egp</id>
+        <email>engapa@gmail.com</email>
+        <name>Enrique Garcia Pablos</name>
+    </developer>
+  </developers>
+
+  <dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <build>
       <plugins>
             <plugin>
@@ -41,4 +74,5 @@
             </plugin>
       </plugins>
   </build>
+
 </project>

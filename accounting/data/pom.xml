@@ -2,13 +2,13 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>accounting</artifactId>
+        <artifactId>account</artifactId>
         <groupId>es.tid.cloud.tdaf</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <groupId>es.tid.cloud.tdaf.accounting</groupId>
-    <artifactId>filtering</artifactId>
-    
+    <artifactId>data</artifactId>
+
     <dependencies>
         <!-- Managed dependencies -->
         <dependency>
@@ -24,25 +24,6 @@
             <artifactId>camel-spring</artifactId>
         </dependency>
         <!-- Particular dependencies -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-script</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-csv</artifactId>
-            <version>${camel.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code</groupId>
-            <artifactId>olv-parser</artifactId>
-            <version>2013-01-24</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.tony19</groupId>
-            <artifactId>named-regexp</artifactId>
-            <version>0.1.9</version>
-        </dependency>
+        
     </dependencies>
 </project>

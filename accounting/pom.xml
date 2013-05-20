@@ -10,6 +10,27 @@
     <artifactId>accounting</artifactId>
     <packaging>pom</packaging>
     <modules>
+        <module>data</module>
         <module>filtering</module>
     </modules>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-maven-plugin</artifactId>
+                <configuration>
+                    <applicationContextUri>META-INF/spring/*.xml</applicationContextUri>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <!-- Reporting -->
+    <reporting>
+        <plugins>
+        <plugin>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-maven-plugin</artifactId>
+        </plugin>
+        </plugins>
+    </reporting>
 </project>
