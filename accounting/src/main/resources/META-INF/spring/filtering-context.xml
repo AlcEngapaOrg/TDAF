@@ -17,7 +17,7 @@
                     <to uri="direct:logFile"/>
                     <camel:when>
                         <simple>${property.CamelBatchComplete}</simple>
-                        <log loggingLevel="INFO" logName="stdout" message="Processsed ${property.CamelBatchSize} files."/>
+                        <log loggingLevel="INFO" logName="STD_OUT" message="Processsed ${property.CamelBatchSize} files."/>
                     </camel:when>
                 </when>
                 <otherwise>
@@ -35,13 +35,13 @@
                 <setHeader headerName="fileTime">
                     <javaScript>java.lang.System.currentTimeMillis() - exchange.getIn().getHeader("fileInit")</javaScript>
                 </setHeader>
-                <log loggingLevel="INFO" logName="stdout" message="File ${header.CamelFileAbsolutePath} processed in ${header.fileTime}ms."/>
+                <log loggingLevel="INFO" logName="STD_OUT" message="File ${header.CamelFileAbsolutePath} processed in ${header.fileTime}ms."/>
             </onCompletion>
             <setHeader headerName="fileInit">
                 <javaScript>java.lang.System.currentTimeMillis()</javaScript>
             </setHeader>
 
-            <log loggingLevel="INFO" logName="stdout" message="Precessing file ${header.CamelFileAbsolutePath}."/>
+            <log loggingLevel="INFO" logName="STD_OUT" message="Precessing file ${header.CamelFileAbsolutePath}."/>
             <split streaming="true" parallelProcessing="true">
                 <method ref="logParser" method="iterator"/>
                 <to uri="direct:event"/>
@@ -65,7 +65,7 @@
             <from uri="direct:processEntry"/>
             <process ref="matches2Headers"/>
             <process ref="logData2Headers"/>
-            <to uri="vm:persist-events"/>
+<!--             <to uri="vm:persist-events"/> -->
         </route>
     </camelContext>
 

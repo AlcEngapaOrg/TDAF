@@ -1,1 +1,3 @@
 "addFirewallRule",".+CamelHttpUri=http://(?:[\d\.:]+)/i2cm/api/org/(?<orgId>[\w]+)/vdc/(?<vdcId>[\w]+)/fw/(?<fwId>[\w]+)/action/addFirewallRule.+CamelHttpMethod=POST.+Body:<tcloud-ecvdcm:AddFirewallRuleParams.+",""
+"createVDC",".+CamelHttpUri=http://(?:[\d\.:]+)/i2cm/api/org/(?<orgId>[\w]+)/vdc/action/instantiateVDC.+CamelHttpMethod=POST.+Body:<tcloud-ecvdcm:InstantiateVDCParams.+",""
+"deleteVAPP",".+CamelHttpMethod=DELETE.+CamelHttpUri=http://(?:[\d\.:]+)/i2cm/api/org/(?<orgId>[\w]+)/vdc,.+Body:\s.+",""

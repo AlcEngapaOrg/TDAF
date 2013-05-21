@@ -11,7 +11,12 @@ public class Main {
         } else {
             System.setProperty("log.dir", args[0]);
             long init = System.currentTimeMillis();
-            ClassPathXmlApplicationContext ctxt = new ClassPathXmlApplicationContext("META-INF/spring/app-context.xml");
+            String[] configLocations = new String[] {
+                    "META-INF/spring/app-context.xml",
+                    "META-INF/spring/filtering-context.xml",
+                    "META-INF/spring/persist-context.xml"
+            };
+            ClassPathXmlApplicationContext ctxt = new ClassPathXmlApplicationContext(configLocations);
             Semaphore semaphore = ctxt.getBean(Semaphore.class);
             semaphore.acquire();
             System.out.println("Finish. Elapsed time: " + (System.currentTimeMillis() - init) + "ms");
