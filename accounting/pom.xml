@@ -6,31 +6,53 @@
         <groupId>es.tid.cloud</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+
     <groupId>es.tid.cloud.tdaf</groupId>
     <artifactId>accounting</artifactId>
+    <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
+
     <modules>
         <module>data</module>
         <module>filtering</module>
     </modules>
-    <build>
+
+    <dependencies>
+        <!-- Managed dependencies -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!-- Reporting -->
+    <reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-maven-plugin</artifactId>
+                <version>${camel.version}</version>
                 <configuration>
-                    <applicationContextUri>META-INF/spring/*.xml</applicationContextUri>
+                    <useDot>true</useDot>
+                    <logClasspath>true</logClasspath>
                 </configuration>
+                <reportSets>
+                    <reportSet>
+                        <configuration />
+                        <reports>
+                            <report>converters-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
-        </plugins>
-    </build>
-    <!-- Reporting -->
-    <reporting>
-        <plugins>
-        <plugin>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-maven-plugin</artifactId>
-        </plugin>
         </plugins>
     </reporting>
 </project>

@@ -7,11 +7,11 @@
                    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring" id="persist-context">
+    <camelContext xmlns="http://camel.apache.org/schema/spring" id="persist-context" >
 
         <route id="persistEventsRoute">
             <from uri="vm:persist-events"/>
-            <to uri="mongodb:myDb?database=account&amp;collection=events&amp;operation=save"/>
+            <to uri="mongodb:myDb?database=accounting&amp;collection=events&amp;operation=save"/>
         </route>
 
     </camelContext>
