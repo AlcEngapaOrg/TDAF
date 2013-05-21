@@ -1,4 +1,4 @@
-package es.tid.cloud.tdaf.accounting.filtering;
+package es.tid.cloud.tdaf.accounting;
 
 import java.util.concurrent.Semaphore;
 
@@ -11,7 +11,7 @@ public class Main {
         } else {
             System.setProperty("log.dir", args[0]);
             long init = System.currentTimeMillis();
-            ClassPathXmlApplicationContext ctxt = new ClassPathXmlApplicationContext("META-INF/spring/application-context.xml");
+            ClassPathXmlApplicationContext ctxt = new ClassPathXmlApplicationContext("META-INF/spring/app-context.xml");
             Semaphore semaphore = ctxt.getBean(Semaphore.class);
             semaphore.acquire();
             System.out.println("Finish. Elapsed time: " + (System.currentTimeMillis() - init) + "ms");

@@ -7,11 +7,14 @@
                    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring" id="persist-context" >
-
+    <camelContext xmlns="http://camel.apache.org/schema/spring" id="persistContext" >
+        <propertyPlaceholder id="persistProps" location="ref:props"/>
         <route id="persistEventsRoute">
             <from uri="vm:persist-events"/>
             <log message="Event Received :  ${body}" logName="stdout" loggingLevel="INFO"/>
+            <recipientList>
+                <simple>velocity:${header.vmLocation}</simple>
+            </recipientList>
             <to uri="mongodb:myDb?database=accounting&amp;collection=events&amp;operation=save"/>
         </route>
 

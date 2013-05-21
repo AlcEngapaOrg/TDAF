@@ -4,14 +4,11 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		                   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <bean class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
-        <property name="location" value="file:${FILTERING_HOME}/conf/filtering.properties"/>
-    </bean>
-
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring" id="filteringContext">
+        <propertyPlaceholder id="filteringProps" location="ref:props"/>
         <route>
             <from uri="file://{{log.dir}}?sendEmptyMessageWhenIdle=true&amp;noop=true&amp;idempotent=true&amp;idempotentKey=${file:name}-${file:size}&amp;initialDelay=0&amp;delay=1"/>
             <choice>
@@ -20,7 +17,7 @@
                     <to uri="direct:logFile"/>
                     <camel:when>
                         <simple>${property.CamelBatchComplete}</simple>
-                        <log loggingLevel="INFO" logName="STD_OUT" message="Processsed ${property.CamelBatchSize} files."/>
+                        <log loggingLevel="INFO" logName="stdout" message="Processsed ${property.CamelBatchSize} files."/>
                     </camel:when>
                 </when>
                 <otherwise>
@@ -31,26 +28,26 @@
                 </otherwise>
             </choice>
         </route>
-        
+
         <route>
             <from uri="direct:logFile"/>
             <onCompletion>
                 <setHeader headerName="fileTime">
                     <javaScript>java.lang.System.currentTimeMillis() - exchange.getIn().getHeader("fileInit")</javaScript>
                 </setHeader>
-                <log loggingLevel="INFO" logName="STD_OUT" message="File ${header.CamelFileAbsolutePath} processed in ${header.fileTime}ms."/>
+                <log loggingLevel="INFO" logName="stdout" message="File ${header.CamelFileAbsolutePath} processed in ${header.fileTime}ms."/>
             </onCompletion>
             <setHeader headerName="fileInit">
                 <javaScript>java.lang.System.currentTimeMillis()</javaScript>
             </setHeader>
 
-            <log logName="STD_OUT" loggingLevel="INFO" message="Precessing file ${header.CamelFileAbsolutePath}."/>
+            <log loggingLevel="INFO" logName="stdout" message="Precessing file ${header.CamelFileAbsolutePath}."/>
             <split streaming="true" parallelProcessing="true">
                 <method ref="logParser" method="iterator"/>
                 <to uri="direct:event"/>
             </split>
         </route>
-        
+
         <route>
             <from uri="direct:event"/>
             <setHeader headerName="matcher">
@@ -63,28 +60,13 @@
                 </when>
             </choice>
         </route>
-        
+
         <route>
             <from uri="direct:processEntry"/>
             <process ref="matches2Headers"/>
             <process ref="logData2Headers"/>
+            <to uri="vm:persist-events"/>
         </route>
     </camelContext>
-    
-    <bean id="logParser" class="es.tid.cloud.tdaf.accounting.filtering.LogParser">
-        <property name="pattern" value="${log.pattern}"/>
-        <property name="dateFormat" value="${log.dateFormat}"/>
-        <property name="customLevels" value="${log.customLevels}"/>
-    </bean>
-    <bean id="ipdrIdentifier" class="es.tid.cloud.tdaf.accounting.filtering.IPDREntryIdentifier">
-        <property name="file" value="file:${FILTERING_HOME}/conf/ipdrEntries.csv"/>
-    </bean>
-    <bean id="ipdrEntryMatcher" class="es.tid.cloud.tdaf.accounting.filtering.IPDREntryMatcher">
-        <constructor-arg ref="ipdrIdentifier"/>
-    </bean>
-    <bean id="matches2Headers" class="es.tid.cloud.tdaf.accounting.filtering.processor.Matches2HeadersProcessor"/>
-    <bean id="logData2Headers" class="es.tid.cloud.tdaf.accounting.filtering.processor.LogDataToHeadersProcessor"/>
-    <bean id="semaphore" class="java.util.concurrent.Semaphore">
-        <constructor-arg value="0"/>
-    </bean>
+
 </beans>
