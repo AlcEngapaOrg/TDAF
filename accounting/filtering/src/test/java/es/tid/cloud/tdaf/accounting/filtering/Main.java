@@ -10,9 +10,11 @@ public class Main {
             System.out.println("Please, specified a directory to scan.");
         } else {
             System.setProperty("log.dir", args[0]);
+            long init = System.currentTimeMillis();
             ClassPathXmlApplicationContext ctxt = new ClassPathXmlApplicationContext("META-INF/spring/application-context.xml");
             Semaphore semaphore = ctxt.getBean(Semaphore.class);
             semaphore.acquire();
+            System.out.println("Finish. Elapsed time: " + (System.currentTimeMillis() - init) + "ms");
             ctxt.close();
         }
     }

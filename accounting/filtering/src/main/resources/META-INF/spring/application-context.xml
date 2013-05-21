@@ -18,6 +18,10 @@
                 <when>
                     <simple>${body} != null</simple>
                     <to uri="direct:logFile"/>
+                    <camel:when>
+                        <simple>${property.CamelBatchComplete}</simple>
+                        <log loggingLevel="INFO" logName="STD_OUT" message="Processsed ${property.CamelBatchSize} files."/>
+                    </camel:when>
                 </when>
                 <otherwise>
                     <setBody>
@@ -30,22 +34,21 @@
         
         <route>
             <from uri="direct:logFile"/>
-            <setHeader headerName="init">
+            <onCompletion>
+                <setHeader headerName="fileTime">
+                    <javaScript>java.lang.System.currentTimeMillis() - exchange.getIn().getHeader("fileInit")</javaScript>
+                </setHeader>
+                <log loggingLevel="INFO" logName="STD_OUT" message="File ${header.CamelFileAbsolutePath} processed in ${header.fileTime}ms."/>
+            </onCompletion>
+            <setHeader headerName="fileInit">
                 <javaScript>java.lang.System.currentTimeMillis()</javaScript>
             </setHeader>
-<!--             <wireTap uri="log:STD_OUT?level=INFO&amp;showBody=true&amp;showHeaders=true&amp;multiline=true&amp;showExchangePattern=false&amp;showBodyType=false"/> -->
-            <log loggingLevel="INFO" logName="STD_OUT" message="Processing"/>
-            <setHeader headerName="log-screen">
-                <javaScript>print("Processing file " + exchange.getIn().getHeader("CamelFileAbsolutePath") +"\n")</javaScript>
-            </setHeader>
+
+            <log logName="STD_OUT" loggingLevel="INFO" message="Precessing file ${header.CamelFileAbsolutePath}."/>
             <split streaming="true" parallelProcessing="true">
                 <method ref="logParser" method="iterator"/>
                 <to uri="direct:event"/>
             </split>
-            <setHeader headerName="end">
-                <javaScript>java.lang.System.currentTimeMillis()</javaScript>
-            </setHeader>
-            <log loggingLevel="INFO" logName="STD_OUT" message="File ms"/>
         </route>
         
         <route>
