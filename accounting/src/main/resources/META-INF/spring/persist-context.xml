@@ -13,7 +13,7 @@
             <from uri="vm:persist-events"/>
             <log message="Event Received :  ${body}" logName="stdout" loggingLevel="INFO"/>
             <recipientList>
-                <simple>velocity:${header.vmLocation}</simple>
+                <simple>velocity://${header.vmLocation}</simple>
             </recipientList>
             <to uri="mongodb:myDb?database=accounting&amp;collection=events&amp;operation=save"/>
         </route>

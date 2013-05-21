@@ -62,7 +62,7 @@ public class PersistEventsRouteTest extends CamelSpringTestSupport {
         when(eventsCollection.save(Matchers.any(DBObject.class))).thenReturn(wr);
 
         // When
-        Object o = template.requestBody(JSON.parse("{name:'enrique',lastName:'garcia'}"));
+        Object o = template.requestBodyAndHeader(JSON.parse("{name:'enrique',lastName:'garcia'}"), "vmLocation", "ele");
 
         // Then
         assertTrue("Result is not of type WriteResult", o instanceof WriteResult);
