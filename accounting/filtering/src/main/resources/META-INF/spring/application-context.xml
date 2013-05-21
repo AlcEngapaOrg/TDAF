@@ -13,7 +13,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="file://D:/Trabajo/Production/Incidencias/20120906?sendEmptyMessageWhenIdle=true"/>
+            <from uri="file://{{log.dir}}?sendEmptyMessageWhenIdle=true&amp;noop=true&amp;idempotent=true&amp;idempotentKey=${file:name}-${file:size}&amp;initialDelay=0&amp;delay=1"/>
             <choice>
                 <when>
                     <simple>${body} != null</simple>
@@ -30,13 +30,22 @@
         
         <route>
             <from uri="direct:logFile"/>
-            <setHeader headerName="log-screen">
-                <javaScript>print("Processing file " + exchange.getIn().getBody().getAbsoluteFilePath() +"\n")</javaScript>
+            <setHeader headerName="init">
+                <javaScript>java.lang.System.currentTimeMillis()</javaScript>
             </setHeader>
-            <split streaming="true">
+<!--             <wireTap uri="log:STD_OUT?level=INFO&amp;showBody=true&amp;showHeaders=true&amp;multiline=true&amp;showExchangePattern=false&amp;showBodyType=false"/> -->
+            <log loggingLevel="INFO" logName="STD_OUT" message="Processing"/>
+            <setHeader headerName="log-screen">
+                <javaScript>print("Processing file " + exchange.getIn().getHeader("CamelFileAbsolutePath") +"\n")</javaScript>
+            </setHeader>
+            <split streaming="true" parallelProcessing="true">
                 <method ref="logParser" method="iterator"/>
                 <to uri="direct:event"/>
             </split>
+            <setHeader headerName="end">
+                <javaScript>java.lang.System.currentTimeMillis()</javaScript>
+            </setHeader>
+            <log loggingLevel="INFO" logName="STD_OUT" message="File ms"/>
         </route>
         
         <route>
