@@ -12,7 +12,6 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 
 import org.apache.camel.Body;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 
 import pl.otros.logview.LogData;

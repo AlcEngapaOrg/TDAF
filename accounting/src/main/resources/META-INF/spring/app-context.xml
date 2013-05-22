@@ -24,11 +24,12 @@
     <bean id="ipdrEntryMatcher" class="es.tid.cloud.tdaf.accounting.filtering.IPDREntryMatcher">
         <constructor-arg ref="ipdrIdentifier"/>
     </bean>
-    <bean id="matches2Headers" class="es.tid.cloud.tdaf.accounting.filtering.processor.Matches2HeadersProcessor"/>
-    <bean id="logData2Headers" class="es.tid.cloud.tdaf.accounting.filtering.processor.LogDataToHeadersProcessor"/>
+    <bean id="matches2Map" class="es.tid.cloud.tdaf.accounting.filtering.MatchesToMap"/>
+    <bean id="logData2Map" class="es.tid.cloud.tdaf.accounting.filtering.LogDataToMap"/>
     <bean id="semaphore" class="java.util.concurrent.Semaphore">
         <constructor-arg value="0"/>
     </bean>
+    <bean id="mapAggregator" class="es.tid.cloud.tdaf.accounting.filtering.aggregator.MapAggregator"/>
 
     <!-- Persistence -->
     <bean id="myDb" class="com.mongodb.Mongo">

@@ -63,9 +63,16 @@
 
         <route>
             <from uri="direct:processEntry"/>
-            <process ref="matches2Headers"/>
-            <process ref="logData2Headers"/>
-<!--             <to uri="vm:persist-events"/> -->
+            <multicast strategyRef="mapAggregator" parallelProcessing="false">
+                <!--  log data to body first and then the add (overriding) with the matches in the message -->
+                <setBody>
+                    <method ref="logData2Map" method="process"/>
+                </setBody>
+                <setBody>
+                    <method ref="matches2Map" method="process"/>
+                </setBody>
+            </multicast>
+            <to uri="vm:persist-events"/>
         </route>
     </camelContext>
 
