@@ -41,17 +41,22 @@ public class IPDREntryIdentifier implements InitializingBean {
                 }
                 String patternId = null;
                 String patternValue = null;
+                String concept = null;
+                String event = null;
                 File template = null;
                 if (row.length > 2) {
                     patternId = row[0];
-                    patternValue = row[1];
-                    template = new File(row[2]);
+                    concept = row[1];
+                    event = row[2];
+                    patternValue = row[3];
+                    template = new File(row[4]);
                 }
-                if (patternValue == null || patternId == null) {
-                    String msg = MessageFormat.format("Error while reading row {0}. The row must have 2 values.", rowCount);
+                if (patternValue == null || patternId == null || concept == null || event == null) {
+                    String msg = MessageFormat.format("Error while reading row {0}. The row must the following columns: PATTERN_ID, IPDR CONCEPT, IPDR EVENT, REGULAR EXPRESSION, PATTERN FILE NAME", rowCount);
                     throw new RuntimeException(msg);
                 }
-                IPRDEntryPattern pattern = new IPRDEntryPattern(patternId, Pattern.compile(patternValue, FLAGS), template);
+                Pattern regExpPattern = Pattern.compile(patternValue, FLAGS);
+                IPRDEntryPattern pattern = new IPRDEntryPattern(patternId, concept, event, regExpPattern, template);
                 List<IPRDEntryPattern> ps = this.patterns.get(patternId);
                 if (ps == null) {
                     this.patterns.put(patternId, ps = new ArrayList<IPRDEntryPattern>());
