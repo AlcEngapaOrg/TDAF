@@ -1,26 +1,23 @@
 package es.tid.cloud.tdaf.accounting;
 
-import java.util.concurrent.Semaphore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Main {
+
+    public final static String LOG_DIR = "log.dir";
+    public final static String SERVICE_ID = "service.id";
+
     public static void main(String[] args) throws Exception {
-        if (args.length != 1) {
-            System.out.println("Please, specified a directory to scan.");
-        } else {
-            System.setProperty("log.dir", args[0]);
-            long init = System.currentTimeMillis();
-            String[] configLocations = new String[] {
-                    "META-INF/spring/app-context.xml",
-                    "META-INF/spring/filtering-context.xml",
-                    "META-INF/spring/persist-context.xml"
-            };
-            ClassPathXmlApplicationContext ctxt = new ClassPathXmlApplicationContext(configLocations);
-            Semaphore semaphore = ctxt.getBean(Semaphore.class);
-            semaphore.acquire();
-            System.out.println("Finish. Elapsed time: " + (System.currentTimeMillis() - init) + "ms");
-            ctxt.close();
+            String logDir = System.getProperty(LOG_DIR);
+            String serviceId = System.getProperty(SERVICE_ID);
+            if(logDir == null || serviceId == null) {
+                System.err.println(String.format("Please, correct system properties are required : \n" +
+                        "\t - %s : log directory.\n" +
+                        "\t - %s : the service id.\n", LOG_DIR, SERVICE_ID));
+                System.exit(1);
+            }
+            org.apache.camel.spring.Main.main(args);
         }
-    }
 }
