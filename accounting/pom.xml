@@ -76,7 +76,7 @@
             <artifactId>camel-velocity</artifactId>
             <version>${camel.version}</version>
         </dependency>
-        <!-- Test Managed Dependencies-->
+        <!-- Test Managed Dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
@@ -111,6 +111,27 @@
                 <configuration>
                     <applicationContextUri>META-INF/spring/*.xml</applicationContextUri>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target</outputDirectory>
+                            <descriptors>
+                                <descriptor>${basedir}/src/main/assemble/installer.xml</descriptor>
+                            </descriptors>
+                            <finalName>${project.artifactId}_${project.version}</finalName>
+                            <ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
