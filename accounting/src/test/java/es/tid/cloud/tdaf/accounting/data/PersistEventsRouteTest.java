@@ -3,9 +3,16 @@ package es.tid.cloud.tdaf.accounting.data;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -17,7 +24,6 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.WriteResult;
-import com.mongodb.util.JSON;
 
 public class PersistEventsRouteTest extends CamelSpringTestSupport {
 
@@ -44,7 +50,6 @@ public class PersistEventsRouteTest extends CamelSpringTestSupport {
         when(mongo.getDB(DB)).thenReturn(accountingDb);
         when(accountingDb.getCollection(COLLECTION)).thenReturn(eventsCollection);
     }
-
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
@@ -62,7 +67,7 @@ public class PersistEventsRouteTest extends CamelSpringTestSupport {
         when(eventsCollection.save(Matchers.any(DBObject.class))).thenReturn(wr);
 
         // When
-        Object o = template.requestBodyAndHeader(JSON.parse("{name:'enrique',lastName:'garcia'}"), "vmLocation", "ele");
+        Object o = template.requestBody(getBodyAsMap());
 
         // Then
         assertTrue("Result is not of type WriteResult", o instanceof WriteResult);
@@ -70,4 +75,26 @@ public class PersistEventsRouteTest extends CamelSpringTestSupport {
 
     }
 
+    @Ignore
+    @Test
+    public void integrationPersistEvent() throws Exception {
+
+        // Given
+        mongo = new Mongo("localhost");
+
+        // When
+        Object o = template.requestBody(getBodyAsMap());
+
+        // Then
+        assertTrue("Result is not of type WriteResult", o instanceof WriteResult);
+
+    }
+
+    private final Map<String, Object> getBodyAsMap(){
+        Map<String, Object> body = new HashMap<String, Object>();
+        body.put("key1", "simpleText");
+        body.put("key2", Arrays.asList(new String[] {"1","2"}));
+        body.put("key3", SimpleDateFormat.getInstance().format(new Date()));
+        return body;
+    }
 }

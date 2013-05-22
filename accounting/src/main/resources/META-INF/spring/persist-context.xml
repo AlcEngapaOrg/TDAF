@@ -12,9 +12,7 @@
         <route id="persistEventsRoute">
             <from uri="vm:persist-events"/>
             <log message="Event Received :  ${body}" logName="stdout" loggingLevel="INFO"/>
-            <recipientList>
-                <simple>velocity://${properties:ACCOUNTING_HOME}/templates/${header.template}.vm</simple>
-            </recipientList>
+            <process ref="jsonProcessor"/>
             <to uri="mongodb:myDb?database=accounting&amp;collection=events&amp;operation=save"/>
         </route>
 
