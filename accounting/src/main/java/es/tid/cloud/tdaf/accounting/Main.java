@@ -1,42 +1,21 @@
 package es.tid.cloud.tdaf.accounting;
 
-import org.apache.camel.CamelContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 
 public class Main {
-    public static void main(String[] args) throws Exception {
-        if (args.length != 1) {
-            System.out.println("Please, specified a directory to scan.");
-        } else {
-            System.setProperty("log.dir", args[0]);
-            String[] configLocations = new String[] {
-                    "META-INF/spring/app-context.xml",
-                    "META-INF/spring/filtering-context.xml",
-                    "META-INF/spring/persist-context.xml"
-            };
-            final ClassPathXmlApplicationContext ctxt = new ClassPathXmlApplicationContext(configLocations);
-            Thread interceptor = new Thread() {
-                @Override
-                public void run() {
-                    ctxt.stop();
-                }
-            };
-            Runtime.getRuntime().addShutdownHook(interceptor);
-            for (CamelContext camelContext: ctxt.getBeansOfType(CamelContext.class).values()) {
-                waitUntilCompleted(camelContext);
-            }
-        }
-    }
 
-    private static void waitUntilCompleted(CamelContext camelContext) {
-        boolean completed = camelContext.getStatus().isStopped();
-        while (!completed) {
-            try {
-                Thread.sleep(1000);
-                completed = camelContext.getStatus().isStopped();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+    public final static String LOG_DIR = "log.dir";
+    public final static String SERVICE_ID = "service.id";
+
+    public static void main(String[] args) throws Exception {
+            String logDir = System.getProperty(LOG_DIR);
+            String serviceId = System.getProperty(SERVICE_ID);
+            if(logDir == null || serviceId == null) {
+                System.err.println(String.format("Please, correct system properties are required : \n" +
+                        "\t - %s : log directory.\n" +
+                        "\t - %s : the service id.\n", LOG_DIR, SERVICE_ID));
+                System.exit(1);
             }
+            org.apache.camel.spring.Main.main(args);
         }
-    }
 }
