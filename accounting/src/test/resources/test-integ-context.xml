@@ -7,8 +7,8 @@
 
         <!-- Integration instance -->
         <bean id="myDb" class="com.mongodb.Mongo">
-        <constructor-arg index="0" value="localhost"/>
-    </bean>
+            <constructor-arg index="0" value="localhost"/>
+        </bean>
 
         <bean id="jsonProcessor" class="es.tid.cloud.tdaf.accounting.persist.processor.JsonProcessor"/>
 </beans>
