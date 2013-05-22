@@ -26,16 +26,14 @@
     </bean>
     <bean id="matches2Map" class="es.tid.cloud.tdaf.accounting.filtering.MatchesToMap"/>
     <bean id="logData2Map" class="es.tid.cloud.tdaf.accounting.filtering.LogDataToMap"/>
-    <bean id="semaphore" class="java.util.concurrent.Semaphore">
-        <constructor-arg value="0"/>
-    </bean>
+    <bean id="matcher2Map" class="es.tid.cloud.tdaf.accounting.filtering.IPDRMatcherToMap"/>
     <bean id="mapAggregator" class="es.tid.cloud.tdaf.accounting.filtering.aggregator.MapAggregator"/>
 
     <!-- Persistence -->
     <bean id="jsonProcessor" class="es.tid.cloud.tdaf.accounting.persist.processor.JsonProcessor"/>
 
     <bean id="myDb" class="com.mongodb.Mongo">
-        <constructor-arg index="0" value="${mongo.host:localhost}"/>
+        <constructor-arg index="0" value="${mongo.host:localhost}" type="java.lang.String"/>
     </bean>
 
 </beans>

@@ -1,7 +1,6 @@
 package es.tid.cloud.tdaf.accounting;
 
-import java.util.concurrent.Semaphore;
-
+import org.apache.camel.CamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Main {
@@ -10,17 +9,34 @@ public class Main {
             System.out.println("Please, specified a directory to scan.");
         } else {
             System.setProperty("log.dir", args[0]);
-            long init = System.currentTimeMillis();
             String[] configLocations = new String[] {
                     "META-INF/spring/app-context.xml",
                     "META-INF/spring/filtering-context.xml",
                     "META-INF/spring/persist-context.xml"
             };
-            ClassPathXmlApplicationContext ctxt = new ClassPathXmlApplicationContext(configLocations);
-            Semaphore semaphore = ctxt.getBean(Semaphore.class);
-            semaphore.acquire();
-            System.out.println("Finish. Elapsed time: " + (System.currentTimeMillis() - init) + "ms");
-            ctxt.close();
+            final ClassPathXmlApplicationContext ctxt = new ClassPathXmlApplicationContext(configLocations);
+            Thread interceptor = new Thread() {
+                @Override
+                public void run() {
+                    ctxt.stop();
+                }
+            };
+            Runtime.getRuntime().addShutdownHook(interceptor);
+            for (CamelContext camelContext: ctxt.getBeansOfType(CamelContext.class).values()) {
+                waitUntilCompleted(camelContext);
+            }
+        }
+    }
+
+    private static void waitUntilCompleted(CamelContext camelContext) {
+        boolean completed = camelContext.getStatus().isStopped();
+        while (!completed) {
+            try {
+                Thread.sleep(1000);
+                completed = camelContext.getStatus().isStopped();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 }

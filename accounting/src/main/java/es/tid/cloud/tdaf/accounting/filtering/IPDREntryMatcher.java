@@ -13,7 +13,8 @@ import com.google.code.regexp.Matcher;
 
 
 public class IPDREntryMatcher {
-    public static final String MATCHER_HEADER = "IPDREntryMatcher";
+    public static final String IPDR_PATTERN_HEADER = "IPRDEntryPattern";
+    public static final String MATCHER_HEADER = "REG_EXP_MATCHER";
 
     private IPDREntryIdentifier ipdrIdentifier = null;
     
@@ -27,6 +28,7 @@ public class IPDREntryMatcher {
             for(IPRDEntryPattern pattern: patterns) {
                 Matcher matcher = pattern.getPattern().matcher(message);
                 if (matcher.matches()) {
+                    outHeaders.put(IPDR_PATTERN_HEADER, pattern);
                     outHeaders.put(MATCHER_HEADER, matcher);
                     return matcher;
                 }

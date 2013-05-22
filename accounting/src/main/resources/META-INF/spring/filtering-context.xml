@@ -10,38 +10,12 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring" id="filteringContext">
         <propertyPlaceholder id="filteringProps" location="ref:props"/>
         <route>
-            <from uri="file://{{log.dir}}?sendEmptyMessageWhenIdle=true&amp;noop=true&amp;idempotent=true&amp;idempotentKey=${file:name}-${file:size}&amp;initialDelay=0&amp;delay=1"/>
-            <choice>
-                <when>
-                    <simple>${body} != null</simple>
-                    <to uri="direct:logFile"/>
-                    <camel:when>
-                        <simple>${property.CamelBatchComplete}</simple>
-                        <log loggingLevel="INFO" logName="STD_OUT" message="Processsed ${property.CamelBatchSize} files."/>
-                    </camel:when>
-                </when>
-                <otherwise>
-                    <setBody>
-                        <constant>1</constant>
-                    </setBody>
-                    <bean ref="semaphore" method="release"/>
-                </otherwise>
-            </choice>
+            <from uri="file://{{log.dir}}?initialDelay=0&amp;delay=1"/>
+            <to uri="direct:logFile"/>
         </route>
 
         <route>
             <from uri="direct:logFile"/>
-            <onCompletion>
-                <setHeader headerName="fileTime">
-                    <javaScript>java.lang.System.currentTimeMillis() - exchange.getIn().getHeader("fileInit")</javaScript>
-                </setHeader>
-                <log loggingLevel="INFO" logName="STD_OUT" message="File ${header.CamelFileAbsolutePath} processed in ${header.fileTime}ms."/>
-            </onCompletion>
-            <setHeader headerName="fileInit">
-                <javaScript>java.lang.System.currentTimeMillis()</javaScript>
-            </setHeader>
-
-            <log loggingLevel="INFO" logName="STD_OUT" message="Precessing file ${header.CamelFileAbsolutePath}."/>
             <split streaming="true" parallelProcessing="true">
                 <method ref="logParser" method="iterator"/>
                 <to uri="direct:event"/>
@@ -64,7 +38,9 @@
         <route>
             <from uri="direct:processEntry"/>
             <multicast strategyRef="mapAggregator" parallelProcessing="false">
-                <!--  log data to body first and then the add (overriding) with the matches in the message -->
+                <setBody>
+                    <method ref="matcher2Map" method="process"/>
+                </setBody>
                 <setBody>
                     <method ref="logData2Map" method="process"/>
                 </setBody>
@@ -75,5 +51,4 @@
             <to uri="vm:persist-events"/>
         </route>
     </camelContext>
-
 </beans>
