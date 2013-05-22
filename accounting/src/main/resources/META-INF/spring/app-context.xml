@@ -12,7 +12,7 @@
 
     <context:property-placeholder properties-ref="props"/>
 
-      <!-- Filtering -->
+    <!-- Filtering -->
     <bean id="logParser" class="es.tid.cloud.tdaf.accounting.filtering.LogParser">
         <property name="pattern" value="${log.pattern}"/>
         <property name="dateFormat" value="${log.dateFormat}"/>
@@ -31,6 +31,8 @@
     </bean>
 
     <!-- Persistence -->
+    <bean id="jsonProcessor" class="es.tid.cloud.tdaf.accounting.persist.processor.JsonProcessor"/>
+
     <bean id="myDb" class="com.mongodb.Mongo">
         <constructor-arg index="0" value="${mongo.host:localhost}"/>
     </bean>

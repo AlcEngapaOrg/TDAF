@@ -20,4 +20,5 @@
             <constructor-arg type="java.lang.Class" value="com.mongodb.DBCollection" />
         </bean>
 
+        <bean id="jsonProcessor" class="es.tid.cloud.tdaf.accounting.persist.processor.JsonProcessor"/>
 </beans>
