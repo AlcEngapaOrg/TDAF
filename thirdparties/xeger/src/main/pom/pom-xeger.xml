@@ -1,0 +1,23 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>nl.flotsam</groupId>
+    <artifactId>xeger</artifactId>
+    <version>1.0</version>
+    <name>Exreg</name>
+    <description>
+        Small library, producing random text matching arbitrary regular expressions.
+    </description>
+    <developers>
+        <developer>
+            <id>wilfred.springer</id>
+            <name>Wilfred Springer</name>
+        </developer>
+    </developers>
+    <dependencies>
+        <dependency>
+            <groupId>dk.brics</groupId>
+            <artifactId>automaton</artifactId>
+            <version>1.11</version>
+        </dependency>
+    </dependencies>
+</project>

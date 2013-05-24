@@ -7,9 +7,9 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <groupId>es.tid.cloud.tdaf.thirdparties</groupId>
-    <artifactId>otroslogviewer</artifactId>
-    <name>${project.groupId}.${project.artifactId}</name>
+    <artifactId>automaton</artifactId>
     <packaging>pom</packaging>
+    <name>${project.groupId}.${project.artifactId}</name>
 
     <build>
         <plugins>
@@ -25,12 +25,11 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>${basedir}/src/main/lib/OtrosLogViewer-app-2013-01-24.jar</file>
+                            <file>${basedir}/src/main/lib/automaton.jar</file>
                             <packaging>jar</packaging>
-                            <groupId>com.google.code</groupId>
-                            <artifactId>olv-parser</artifactId>
-                            <version>2013-01-24</version>
-                            <pomFile>${basedir}/src/main/pom/pom-olv.xml</pomFile>
+                            <groupId>dk.brics</groupId>
+                            <artifactId>automaton</artifactId>
+                            <version>1.11</version>
                         </configuration>
                     </execution>
                 </executions>

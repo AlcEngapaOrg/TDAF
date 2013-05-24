@@ -4,15 +4,11 @@
     <artifactId>tdaf</artifactId>
     <groupId>es.tid.cloud</groupId>
     <version>0.0.1-SNAPSHOT</version>
-    <relativePath>..</relativePath>
   </parent>
   <groupId>es.tid.cloud.tdaf</groupId>
-  <artifactId>thirdparties</artifactId>
-  <name>${project.groupId}.${project.artifactId}</name>
+  <artifactId>miscellaneous</artifactId>
   <packaging>pom</packaging>
   <modules>
-      <module>otroslogviewer</module>
-      <module>automaton</module>
-      <module>xeger</module>
+      <module>ipdr-generator</module>
   </modules>
 </project>

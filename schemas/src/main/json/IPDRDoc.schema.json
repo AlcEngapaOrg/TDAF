@@ -1,0 +1,47 @@
+{
+    "$schema": "http://json-schema.org/draft-03/schema#",
+    "description": "The IPDRDoc element is the top-level container of a set of IPDRs. The document will also define the entity which recorded these IPDRs via the IPDR element.",
+    "type": "object",
+    "properties": {
+        "IPDR": {
+            "type": "array",
+            "items": {
+                "description": "An IPDR describes an event between a service consumer and a service element. Details of the event are contained within this record. All IPDR elements have a time indicating when the event occurred.",
+                "type": "object",
+                "properties": {
+                    "IPDRCreationTime": {
+                        "$ref": "dateTimeMsec.schema.json"
+                    },
+                    "seqNum": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "IPDRDoc.End": {
+            "description": "The IPDRDoc.End element optionally marks the end of the IPDR block. It may contain some check information like a count of IPDRs.",
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "endTime": {
+                    "$ref": "dateTimeMsec.schema.json"
+                }
+            }
+        },
+        "docId": {
+            "$ref": "UUID.schema.json",
+            "required": true
+        },
+        "version": {
+            "type": "string"
+        },
+        "creationTime": {
+            "$ref": "dateTimeMsec.schema.json"
+        },
+        "IPDRRecorderInfo": {
+            "type": "string"
+        }
+    }
+}

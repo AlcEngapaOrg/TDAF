@@ -1,0 +1,6 @@
+{
+    "id": "", 
+    "description": "A universal unique id in hex dash notation. Example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6",
+    "type": "string",
+    "pattern": "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+}

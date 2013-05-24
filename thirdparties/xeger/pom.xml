@@ -7,7 +7,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <groupId>es.tid.cloud.tdaf.thirdparties</groupId>
-    <artifactId>otroslogviewer</artifactId>
+    <artifactId>xeger</artifactId>
     <name>${project.groupId}.${project.artifactId}</name>
     <packaging>pom</packaging>
 
@@ -25,12 +25,12 @@
                             <goal>install-file</goal>
                         </goals>
                         <configuration>
-                            <file>${basedir}/src/main/lib/OtrosLogViewer-app-2013-01-24.jar</file>
+                            <file>${basedir}/src/main/lib/xeger-1.0.jar</file>
                             <packaging>jar</packaging>
-                            <groupId>com.google.code</groupId>
-                            <artifactId>olv-parser</artifactId>
-                            <version>2013-01-24</version>
-                            <pomFile>${basedir}/src/main/pom/pom-olv.xml</pomFile>
+                            <groupId>nl.flotsam</groupId>
+                            <artifactId>xeger</artifactId>
+                            <version>1.0</version>
+                            <pomFile>${basedir}/src/main/pom/pom-xeger.xml</pomFile>
                         </configuration>
                     </execution>
                 </executions>
