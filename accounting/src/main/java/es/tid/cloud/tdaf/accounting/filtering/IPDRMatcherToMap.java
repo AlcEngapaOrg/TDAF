@@ -7,7 +7,7 @@ import org.apache.camel.Header;
 
 
 public class IPDRMatcherToMap {
-    public Map<String, Object> process(@Header(IPDREntryMatcher.MATCHER_HEADER) IPRDEntryPattern pattern) {
+    public Map<String, Object> process(@Header(IPDREntryMatcher.IPDR_PATTERN_HEADER) IPRDEntryPattern pattern) {
         Map<String, Object> map = new HashMap<String, Object>();
         if (pattern != null) {
             map.put(IPDRConstants.EVENT, pattern.getEvent());
