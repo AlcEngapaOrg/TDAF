@@ -14,6 +14,8 @@
       <spring.version>3.2.2.RELEASE</spring.version>
       <mockito.version>1.9.5</mockito.version>
       <slf4j.version>1.6.6</slf4j.version>
+      <cxf.version>2.7.4</cxf.version>
+      <jackson.version>1.9.12</jackson.version>
 
       <!-- Plugins versions -->
       <maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
@@ -136,7 +138,6 @@
                     <excludes>
                         <exclude>**/*ITest.java</exclude>
                     </excludes>
-                    <skip>false</skip>
                 </configuration>
             </plugin>
       </plugins>
@@ -162,9 +163,11 @@
                             <childDelegation>false</childDelegation>
                             <useFile>true</useFile>
                             <includes>
-                                <include>**/*Test.*</include>
-                                <include>**/*Integration.*</include>
+                                <include>**/*Test.java</include>
                             </includes>
+                            <excludes>
+                                <exclude/>
+                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>

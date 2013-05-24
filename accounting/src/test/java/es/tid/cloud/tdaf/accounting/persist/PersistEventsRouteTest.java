@@ -24,12 +24,12 @@ public class PersistEventsRouteTest extends PersistEventsRouteTestSupport {
     public void doPreSetup() throws Exception {
         super.doPreSetup();
 
-        mongo = getMandatoryBean(Mongo.class, "myDb");
-        accountingDb = getMandatoryBean(DB.class, DB);
-        eventsCollection = getMandatoryBean(DBCollection.class, COLLECTION);
+        mongo = getMandatoryBean(Mongo.class, TestUtil.DB_CONNECTION);
+        accountingDb = getMandatoryBean(DB.class, TestUtil.DB);
+        eventsCollection = getMandatoryBean(DBCollection.class, TestUtil.COLLECTION);
 
-        when(mongo.getDB(DB)).thenReturn(accountingDb);
-        when(accountingDb.getCollection(COLLECTION)).thenReturn(eventsCollection);
+        when(mongo.getDB(TestUtil.DB)).thenReturn(accountingDb);
+        when(accountingDb.getCollection(TestUtil.COLLECTION)).thenReturn(eventsCollection);
     }
 
     @Test

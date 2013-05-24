@@ -14,9 +14,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public abstract class PersistEventsRouteTestSupport extends CamelSpringTestSupport {
 
-    protected final static String COLLECTION = "events";
-    protected final static String DB = "accounting";
-
     /** The producer template. */
     @Produce(uri = "vm:persist-events")
     protected ProducerTemplate template;

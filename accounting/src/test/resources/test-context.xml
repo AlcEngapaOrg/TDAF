@@ -5,20 +5,32 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-        <!-- We mock the Mongo -->
-        <bean id="myDb" class="org.mockito.Mockito" factory-method="mock">
-            <constructor-arg type="java.lang.Class" value="com.mongodb.Mongo" />
-        </bean>
+    <!-- Accounting Properties -->
+    <bean id="props" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations" value="conf/accounting.properties" />
+    </bean>
 
-        <!-- We mock MongoDB -->
-        <bean id="accounting" class="org.mockito.Mockito" factory-method="mock">
-            <constructor-arg type="java.lang.Class" value="com.mongodb.DB" />
-        </bean>
+    <context:property-placeholder properties-ref="props"/>
 
-        <!-- We mock event collections -->
-        <bean id="events" class="org.mockito.Mockito" factory-method="mock">
-            <constructor-arg type="java.lang.Class" value="com.mongodb.DBCollection" />
-        </bean>
+    <!-- We mock the Mongo -->
+    <bean id="myDb" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg type="java.lang.Class" value="com.mongodb.Mongo" />
+    </bean>
 
-        <bean id="jsonProcessor" class="es.tid.cloud.tdaf.accounting.persist.processor.JsonProcessor"/>
+    <!-- We mock MongoDB -->
+    <bean id="accounting" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg type="java.lang.Class" value="com.mongodb.DB" />
+    </bean>
+
+    <!-- We mock event collections -->
+    <bean id="events" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg type="java.lang.Class" value="com.mongodb.DBCollection" />
+    </bean>
+
+    <bean id="jsonProcessor" class="es.tid.cloud.tdaf.accounting.persist.processor.JsonProcessor"/>
+
+    <!-- Publish -->
+    <bean id="accountingResource" class="es.tid.cloud.tdaf.accounting.rest.resources.AccountingResourceImpl">
+        <constructor-arg ref="myDb"/>
+    </bean>
 </beans>
