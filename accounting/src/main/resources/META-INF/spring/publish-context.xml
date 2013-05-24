@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:cxf-camel="http://camel.apache.org/schema/cxf"
+    xmlns:cxf="http://cxf.apache.org/core"
+    xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <context:property-placeholder properties-ref="props"/>
+
+    <jaxrs:server id="restService" address="${rest.baseURL}">
+        <jaxrs:serviceBeans>
+            <ref bean="accountingResource"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </jaxrs:providers>
+        <jaxrs:features>
+            <cxf:logging />
+        </jaxrs:features>
+    </jaxrs:server>
+
+<!-- 
+   <cxf-camel:rsServer id="rsServer" address="${rest.baseURL}" 
+    serviceClass="es.tid.cloud.tdaf.accounting.rest.resources.AccountingResourceImpl"
+    loggingFeatureEnabled="true" loggingSizeLimit="20" skipFaultLogging="false">
+        <cxf-camel:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </cxf-camel:providers>
+   </cxf-camel:rsServer>
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring" id="publishContext">
+
+        <route id="publishRoute">
+            <from uri="cxfrs://bean://rsServer" />
+            <log message="YUUUUUP !!!!!" loggingLevel="INFO"/>
+        </route>
+
+    </camelContext> -->
+
+</beans>
