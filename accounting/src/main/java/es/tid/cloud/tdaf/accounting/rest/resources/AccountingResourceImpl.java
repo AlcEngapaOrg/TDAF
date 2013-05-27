@@ -1,11 +1,11 @@
 package es.tid.cloud.tdaf.accounting.rest.resources;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -33,6 +33,9 @@ public class AccountingResourceImpl implements AccountingResource {
 
     public Response getAllEvents(EventQuery eventQuery) {
         Object returnedObject = getJSON(null, eventQuery);
+        if(returnedObject == null){
+            return Response.status(Status.NOT_FOUND).build();
+        }
         return Response.ok(returnedObject).build();
     }
 
@@ -46,10 +49,13 @@ public class AccountingResourceImpl implements AccountingResource {
         } else {
             returnedObject = getJSON(id, eventQueryParam);
         }
+        if(returnedObject == null){
+            return Response.status(Status.NOT_FOUND).build();
+        }
         return Response.ok(returnedObject).build();
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes"})
     private Object getJSON(String serviceId, EventQuery eventQuery) {
         QueryBuilder queryBuilder = QueryBuilder.start();
         if(eventQuery != null) {
@@ -66,14 +72,14 @@ public class AccountingResourceImpl implements AccountingResource {
         DBObject query = queryBuilder.get();
         DBCursor dbCursor = mongo.getDB(DB).getCollection(COLLECTION).find(query);
         if(dbCursor.count()<1){
-            throw new NotFoundException();
+            return null;
         }
         List<DBObject> eventList = dbCursor.toArray();
-        Map mapEvents = new HashMap(eventList.size());
+        List<Map> events = new ArrayList<Map>(eventList.size());
         for (DBObject dbObject : eventList) {
-            mapEvents.putAll(dbObject.toMap());
+            events.add(dbObject.toMap());
         }
-        return mapper.convertValue(mapEvents, JsonNode.class);
+        return mapper.convertValue(events, JsonNode.class);
     }
 
 }

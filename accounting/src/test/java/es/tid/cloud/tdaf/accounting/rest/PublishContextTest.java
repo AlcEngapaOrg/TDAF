@@ -1,8 +1,13 @@
 package es.tid.cloud.tdaf.accounting.rest;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,8 +21,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
-import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -37,6 +42,7 @@ import com.mongodb.Mongo;
 
 import es.tid.cloud.tdaf.accounting.persist.TestUtil;
 import es.tid.cloud.tdaf.accounting.rest.resources.AccountingResource;
+import es.tid.cloud.tdaf.accounting.rest.resources.AccountingResource.EventQuery;
 
 @ContextConfiguration(
         locations = {"classpath:test-context.xml",
@@ -50,12 +56,12 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
     Mongo mongo;
     @Autowired
     DB accountingDb;
-    @Autowired
+
+    //Extra Mocks
+    DBCursor dbCursor;
     DBCollection eventsCollection;
 
-    //Mocks
-    DBCursor dbCursor;
-    DBCollection testDbCollection;
+    ObjectMapper mapper = new ObjectMapper();
 
     @BeforeClass
     public static void setupUrls() {
@@ -71,17 +77,17 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
     @Before
     public void setUp() throws Exception {
         dbCursor = Mockito.mock(DBCursor.class);
-        testDbCollection = Mockito.mock(DBCollection.class);
+        eventsCollection = Mockito.mock(DBCollection.class);
         when(mongo.getDB(TestUtil.DB)).thenReturn(accountingDb);
         when(accountingDb.getCollection(TestUtil.COLLECTION)).thenReturn(eventsCollection);
+        when(eventsCollection.find(Mockito.any(DBObject.class))).thenReturn(dbCursor);
     }
 
     @Test
-    public void whenGetAllEventShouldRetunrAllEvents() throws Exception {
+    public void whenGetAllEventShouldReturnAllEvents() throws Exception {
 
         //Given
-        List<DBObject> dbObjects = getDBObjects();
-        when(eventsCollection.find(Mockito.any(DBObject.class))).thenReturn(dbCursor);
+        List<DBObject> dbObjects = getDBObjects(new String[] {"InstantServer", "VDC", "Cosmonautiko"});
         when(dbCursor.toArray()).thenReturn(dbObjects);
         when(dbCursor.count()).thenReturn(NUMBER_EVENTS);
 
@@ -95,15 +101,58 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
         //Then
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertNotNull(response.getEntity());
-        assertTrue(response.getEntity() instanceof JsonNode);
-        assertTrue(((JsonNode)response.getEntity()).size()==NUMBER_EVENTS);
+        assertTrue(mapper.readTree((InputStream)response.getEntity()).size()==NUMBER_EVENTS);
         verify(eventsCollection).find(Matchers.any(DBObject.class));
         verify(dbCursor).toArray();
     }
 
-    private List<DBObject> getDBObjects(){
+    @Test
+    public void whenGetAllEventAndThereAreNotEventShouldReturnNotFoundException() throws Exception {
+
+        //Given
+        when(dbCursor.count()).thenReturn(0);
+
+        //When
+        AccountingResource accountingResource = JAXRSClientFactory.create(System.getProperty(REST_URL) ,
+                AccountingResource.class, 
+                Collections.singletonList(new JacksonJsonProvider()));
+
+        Response response = accountingResource.getAllEvents(null);
+
+        //Then
+        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        verify(eventsCollection).find(Matchers.any(DBObject.class));
+        verify(dbCursor, never()).toArray();
+    }
+
+    @Test
+    public void whenGetEventsByServiceIdThenShouldReturnFilteredEvents() throws Exception {
+
+        //Given
+        List<DBObject> dbObjects = getDBObjects(new String[] {"InstantServer", "VDC", "Cosmonautiko","Pepe"});
+        when(dbCursor.toArray()).thenReturn(dbObjects);
+        when(dbCursor.count()).thenReturn(NUMBER_EVENTS);
+        AccountingResource.EventQuery eventQuery = new EventQuery();
+        eventQuery.setStartDate(new SimpleDateFormat().format(new Date()));
+        eventQuery.setEndDate(new SimpleDateFormat().format(new Date(System.currentTimeMillis()+10000L)));
+
+        //When
+        AccountingResource accountingResource = JAXRSClientFactory.create(System.getProperty(REST_URL) ,
+                AccountingResource.class, 
+                Collections.singletonList(new JacksonJsonProvider()));
+
+        Response response = accountingResource.findEvents("InstantServer", null, null);
+
+        //Then
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        assertNotNull(response.getEntity());
+        assertTrue(mapper.readTree((InputStream)response.getEntity()).size()==NUMBER_EVENTS);
+        verify(eventsCollection).find(Matchers.any(DBObject.class));
+        verify(dbCursor).toArray();
+    }
+
+    private List<DBObject> getDBObjects(String[] servicesId){
         List<DBObject> dbObjects = new ArrayList<DBObject>();
-        String[] servicesId = {"InstantServer", "VDC", "Cosmonautiko"};
         for (int i = 1; i <= NUMBER_EVENTS; i++) {
             Map<String, Object> m = new HashMap<String, Object>();
             m.put("serviceId", servicesId[i % servicesId.length]);
