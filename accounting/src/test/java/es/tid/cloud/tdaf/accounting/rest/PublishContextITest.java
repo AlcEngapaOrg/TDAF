@@ -208,9 +208,7 @@ public class PublishContextITest extends AbstractJUnit4SpringContextTests {
                 new SimpleDateFormat(AccountingResourceImpl.DATE_FORMAT).format(startAndEndDate));
 
         //Then
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        assertNotNull(response.getEntity());
-        assertTrue(mapper.readTree((InputStream)response.getEntity()).size()==0);
+        assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
 
     private List<DBObject> getDBObjects(String[] servicesId){
