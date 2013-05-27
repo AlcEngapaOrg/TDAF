@@ -1,15 +1,19 @@
 package es.tid.cloud.tdaf.accounting.rest.resources;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
@@ -19,10 +23,8 @@ public class AccountingResourceImpl implements AccountingResource {
 
     private final static String DB = "accounting";
     private final static String COLLECTION = "events";
+    public final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 
-    private final static String SERVICE_FIELD = "serviceId";
-    private final static String TIME_FIELD = "time";
-    
     private final ObjectMapper mapper = new ObjectMapper();
 
     private Mongo mongo;
@@ -31,8 +33,8 @@ public class AccountingResourceImpl implements AccountingResource {
         this.mongo = mongo;
     }
 
-    public Response getAllEvents(EventQuery eventQuery) {
-        Object returnedObject = getJSON(null, eventQuery);
+    public Response getAllEvents(String startDate, String endDate) throws WebApplicationException{
+        Object returnedObject = getJSON(null, startDate, endDate);
         if(returnedObject == null){
             return Response.status(Status.NOT_FOUND).build();
         }
@@ -40,15 +42,8 @@ public class AccountingResourceImpl implements AccountingResource {
     }
 
     @Override
-    public Response findEvents(String id,
-            EventQuery eventQueryParam,
-            EventQuery eventMatrixParam) {
-        Object returnedObject = null;
-        if(eventMatrixParam != null) {
-            returnedObject = getJSON(id, eventMatrixParam);
-        } else {
-            returnedObject = getJSON(id, eventQueryParam);
-        }
+    public Response findEvents(String id, String startDate, String endDate) throws WebApplicationException{
+        Object returnedObject = getJSON(id, startDate, endDate);
         if(returnedObject == null){
             return Response.status(Status.NOT_FOUND).build();
         }
@@ -56,21 +51,29 @@ public class AccountingResourceImpl implements AccountingResource {
     }
 
     @SuppressWarnings({ "rawtypes"})
-    private Object getJSON(String serviceId, EventQuery eventQuery) {
-        QueryBuilder queryBuilder = QueryBuilder.start();
-        if(eventQuery != null) {
-            if(eventQuery.getStartDate()!=null){
-                queryBuilder.and(TIME_FIELD).greaterThanEquals(eventQuery.getStartDate());
+    private Object getJSON(String serviceId, String startDate, String endDate) throws WebApplicationException {
+        List<DBObject> andObjects = new ArrayList<DBObject>();
+        try {
+            if(startDate != null) {
+                andObjects.add(QueryBuilder.start(TIME_FIELD).greaterThanEquals(new SimpleDateFormat(DATE_FORMAT).parse(startDate)).get());
             }
-            if(eventQuery.getEndDate()!=null){
-                queryBuilder.and(TIME_FIELD).lessThanEquals(eventQuery.getEndDate());
+            if(endDate != null){
+                andObjects.add(QueryBuilder.start(TIME_FIELD).lessThanEquals(new SimpleDateFormat(DATE_FORMAT).parse(endDate)).get());
             }
+        } catch (ParseException e) {
+            throw new WebApplicationException(e, Status.BAD_REQUEST);
         }
         if(serviceId != null) {
-            queryBuilder.and(SERVICE_FIELD).in(serviceId);
+            andObjects.add(new BasicDBObject(SERVICE_FIELD ,serviceId));
         }
-        DBObject query = queryBuilder.get();
-        DBCursor dbCursor = mongo.getDB(DB).getCollection(COLLECTION).find(query);
+        DBCursor dbCursor = null;
+        if(andObjects.size()>0) {
+            DBObject query = QueryBuilder.start().and(andObjects.toArray(new BasicDBObject[andObjects.size()])).get();
+            dbCursor = mongo.getDB(DB).getCollection(COLLECTION).find(query);
+        }
+        else {
+            dbCursor = mongo.getDB(DB).getCollection(COLLECTION).find();
+        }
         if(dbCursor.count()<1){
             return null;
         }

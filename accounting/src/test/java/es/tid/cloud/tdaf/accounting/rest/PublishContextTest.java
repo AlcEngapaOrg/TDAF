@@ -42,7 +42,6 @@ import com.mongodb.Mongo;
 
 import es.tid.cloud.tdaf.accounting.persist.TestUtil;
 import es.tid.cloud.tdaf.accounting.rest.resources.AccountingResource;
-import es.tid.cloud.tdaf.accounting.rest.resources.AccountingResource.EventQuery;
 
 @ContextConfiguration(
         locations = {"classpath:test-context.xml",
@@ -80,7 +79,7 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
         eventsCollection = Mockito.mock(DBCollection.class);
         when(mongo.getDB(TestUtil.DB)).thenReturn(accountingDb);
         when(accountingDb.getCollection(TestUtil.COLLECTION)).thenReturn(eventsCollection);
-        when(eventsCollection.find(Mockito.any(DBObject.class))).thenReturn(dbCursor);
+        
     }
 
     @Test
@@ -88,6 +87,7 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
 
         //Given
         List<DBObject> dbObjects = getDBObjects(new String[] {"InstantServer", "VDC", "Cosmonautiko"});
+        when(eventsCollection.find()).thenReturn(dbCursor);
         when(dbCursor.toArray()).thenReturn(dbObjects);
         when(dbCursor.count()).thenReturn(NUMBER_EVENTS);
 
@@ -96,13 +96,13 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
                 AccountingResource.class, 
                 Collections.singletonList(new JacksonJsonProvider()));
 
-        Response response = accountingResource.getAllEvents(null);
+        Response response = accountingResource.getAllEvents(null, null);
 
         //Then
         assertEquals(Status.OK.getStatusCode(), response.getStatus());
         assertNotNull(response.getEntity());
         assertTrue(mapper.readTree((InputStream)response.getEntity()).size()==NUMBER_EVENTS);
-        verify(eventsCollection).find(Matchers.any(DBObject.class));
+        verify(eventsCollection).find();
         verify(dbCursor).toArray();
     }
 
@@ -110,6 +110,7 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
     public void whenGetAllEventAndThereAreNotEventShouldReturnNotFoundException() throws Exception {
 
         //Given
+        when(eventsCollection.find()).thenReturn(dbCursor);
         when(dbCursor.count()).thenReturn(0);
 
         //When
@@ -117,11 +118,11 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
                 AccountingResource.class, 
                 Collections.singletonList(new JacksonJsonProvider()));
 
-        Response response = accountingResource.getAllEvents(null);
+        Response response = accountingResource.getAllEvents(null, null);
 
         //Then
         assertEquals(Status.NOT_FOUND.getStatusCode(), response.getStatus());
-        verify(eventsCollection).find(Matchers.any(DBObject.class));
+        verify(eventsCollection).find();
         verify(dbCursor, never()).toArray();
     }
 
@@ -130,11 +131,9 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
 
         //Given
         List<DBObject> dbObjects = getDBObjects(new String[] {"InstantServer", "VDC", "Cosmonautiko","Pepe"});
+        when(eventsCollection.find(Mockito.any(DBObject.class))).thenReturn(dbCursor);
         when(dbCursor.toArray()).thenReturn(dbObjects);
         when(dbCursor.count()).thenReturn(NUMBER_EVENTS);
-        AccountingResource.EventQuery eventQuery = new EventQuery();
-        eventQuery.setStartDate(new SimpleDateFormat().format(new Date()));
-        eventQuery.setEndDate(new SimpleDateFormat().format(new Date(System.currentTimeMillis()+10000L)));
 
         //When
         AccountingResource accountingResource = JAXRSClientFactory.create(System.getProperty(REST_URL) ,
