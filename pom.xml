@@ -132,7 +132,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- forkMode>pertest</forkMode -->
@@ -144,7 +143,7 @@
                     <!-- </systemPropertyVariables> -->
                     <runOrder>alphabetical</runOrder>
                     <excludes>
-                        <exclude>**/*ITest.java</exclude>
+                        <exclude>**/itest/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -161,15 +160,14 @@
         </profile>
         <profile>
             <!-- The profile for running the unit and integration test -->
-            <id>itests</id>
+            <id>itest</id>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <includes>
-                                <include>**/*ITest.java</include>
+                                <include>**/itest/**</include>
                             </includes>
                         </configuration>
                         <executions>

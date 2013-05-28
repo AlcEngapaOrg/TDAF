@@ -1,4 +1,4 @@
-package es.tid.cloud.tdaf.accounting.integration;
+package es.tid.cloud.tdaf.accounting.itest;
 
 import org.junit.Test;
 

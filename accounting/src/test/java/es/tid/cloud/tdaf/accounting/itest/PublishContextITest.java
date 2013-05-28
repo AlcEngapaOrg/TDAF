@@ -1,4 +1,4 @@
-package es.tid.cloud.tdaf.accounting.integration;
+package es.tid.cloud.tdaf.accounting.itest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
