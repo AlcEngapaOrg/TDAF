@@ -1,8 +1,10 @@
-package es.tid.cloud.tdaf.accounting.persist;
+package es.tid.cloud.tdaf.accounting.integration.test;
 
 import org.junit.Test;
 
 import com.mongodb.WriteResult;
+
+import es.tid.cloud.tdaf.accounting.persist.PersistEventsRouteTestSupport;
 
 
 public class PersistEventsRouteITest extends PersistEventsRouteTestSupport {
