@@ -5,39 +5,41 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- Accounting Properties -->
-    <bean id="props" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-        <property name="locations" value="file:${ACCOUNTING_HOME}/conf/accounting.properties" />
+    <!-- COMMON -->
+    <bean id="cfgProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations" value="file:${ACCOUNTING_HOME}/conf/accounting.cfg" />
     </bean>
 
-    <context:property-placeholder properties-ref="props"/>
+    <context:property-placeholder properties-ref="cfgProps"/>
 
-    <!-- Filtering -->
+    <!-- FILTERING -->
+    <!--  JSR303 Validation -->
+    <bean id="validatorFactory" class="javax.validation.Validation" factory-method="buildDefaultValidatorFactory" />
+    <bean id="validator" factory-bean="validatorFactory" factory-method="getValidator" />
+    <!-- CSV Parser -->
+    <bean id="eventCSVEntryParser" class="es.tid.cloud.tdaf.accounting.filtering.csv.EventCSVEntryParser" >
+        <constructor-arg ref="validator"/>
+    </bean>
+    <bean id="eventCSVParser" class="es.tid.cloud.tdaf.accounting.filtering.csv.EventCSVParser"
+        init-method="parseEventPatterns" >
+        <property name="file" value="file:${ACCOUNTING_HOME}/conf/accounting-events.csv"/>
+        <!--  <property name="eventCSVEntryFilter" ref="anyAccountingEventEntry"/> -->
+        <property name="eventCSVEntryParser" ref="eventCSVEntryParser"/>
+    </bean>
+
     <bean id="logParser" class="es.tid.cloud.tdaf.accounting.filtering.LogParser">
         <property name="pattern" value="${log.pattern}"/>
         <property name="dateFormat" value="${log.dateFormat}"/>
         <property name="customLevels" value="${log.customLevels}"/>
     </bean>
-    <bean id="ipdrIdentifier" class="es.tid.cloud.tdaf.accounting.filtering.IPDREntryIdentifier">
-        <property name="file" value="file:${ACCOUNTING_HOME}/conf/ipdrEntries.csv"/>
-    </bean>
-    <bean id="ipdrEntryMatcher" class="es.tid.cloud.tdaf.accounting.filtering.IPDREntryMatcher">
-        <constructor-arg ref="ipdrIdentifier"/>
-    </bean>
-    <bean id="matches2Map" class="es.tid.cloud.tdaf.accounting.filtering.MatchesToMap"/>
-    <bean id="logData2Map" class="es.tid.cloud.tdaf.accounting.filtering.LogDataToMap"/>
-    <bean id="matcher2Map" class="es.tid.cloud.tdaf.accounting.filtering.IPDRMatcherToMap"/>
-    <bean id="mapAggregator" class="es.tid.cloud.tdaf.accounting.filtering.aggregator.MapAggregator"/>
 
-    <!-- Persistence -->
-    <bean id="jsonProcessor" class="es.tid.cloud.tdaf.accounting.persist.processor.JsonProcessor"/>
+    <bean id="eventEntryMatcherProcessor" class="es.tid.cloud.tdaf.accounting.filtering.EventEntryMatcherProcessor">
+        <constructor-arg ref="eventCSVParser"/>
+    </bean>
 
+    <!-- PERSISTENCE -->
     <bean id="myDb" class="com.mongodb.Mongo">
         <constructor-arg index="0" value="${mongo.host:localhost}" type="java.lang.String"/>
     </bean>
 
-    <!-- Publish -->
-    <bean id="accountingResource" class="es.tid.cloud.tdaf.accounting.rest.resources.AccountingResourceImpl">
-        <constructor-arg ref="myDb"/>
-    </bean>
 </beans>

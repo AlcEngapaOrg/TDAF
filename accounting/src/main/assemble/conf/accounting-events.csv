@@ -1,0 +1,5 @@
+##
+## CSV File .
+##
+## Accounting events
+## <serviceId>;<id>;<concept>;[<event>];<logPattern>[;<mode:OFFLINE|ONLINE>]

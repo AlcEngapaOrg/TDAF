@@ -8,21 +8,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -33,14 +29,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import com.mongodb.BasicDBObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
+import com.mongodb.util.JSON;
 
-import es.tid.cloud.tdaf.accounting.persist.TestUtil;
+import es.tid.cloud.tdaf.accounting.Constants;
+import es.tid.cloud.tdaf.accounting.model.EventBase.Mode;
+import es.tid.cloud.tdaf.accounting.model.EventEntry;
 import es.tid.cloud.tdaf.accounting.rest.resources.AccountingResource;
 
 @ContextConfiguration(
@@ -77,8 +78,8 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
     public void setUp() throws Exception {
         dbCursor = Mockito.mock(DBCursor.class);
         eventsCollection = Mockito.mock(DBCollection.class);
-        when(mongo.getDB(TestUtil.DB)).thenReturn(accountingDb);
-        when(accountingDb.getCollection(TestUtil.COLLECTION)).thenReturn(eventsCollection);
+        when(mongo.getDB(Constants.MONGO_DB)).thenReturn(accountingDb);
+        when(accountingDb.getCollection(Constants.MONGO_COLLECTION)).thenReturn(eventsCollection);
         
     }
 
@@ -153,11 +154,22 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
     private List<DBObject> getDBObjects(String[] servicesId){
         List<DBObject> dbObjects = new ArrayList<DBObject>();
         for (int i = 1; i <= NUMBER_EVENTS; i++) {
-            Map<String, Object> m = new HashMap<String, Object>();
-            m.put("serviceId", servicesId[i % servicesId.length]);
-            m.put("time", SimpleDateFormat.getInstance().format(new Date()));
-            BasicDBObject dbObject = new BasicDBObject(m);
-            dbObjects.add(dbObject);
+            EventEntry eventEntry = new EventEntry(
+                    servicesId[i % servicesId.length],
+                    servicesId[i % servicesId.length]+"EventId",
+                    servicesId[i % servicesId.length]+"Concept",
+                    servicesId[i % servicesId.length]+"Event",
+                    Mode.OFFLINE,
+                    new HashMap<String, Object>(),
+                    new HashMap<String, Object>(),
+                    new Date());
+            DBObject dbObject;
+            try {
+                dbObject = (DBObject)JSON.parse(mapper.writeValueAsString(eventEntry));
+                dbObjects.add(dbObject);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
         }
         return dbObjects;
     }

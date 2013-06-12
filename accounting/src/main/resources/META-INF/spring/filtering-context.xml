@@ -8,47 +8,37 @@
                            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring" id="filteringContext">
-        <propertyPlaceholder id="filteringProps" location="ref:props"/>
-        <route>
+
+        <propertyPlaceholder id="filteringProps" location="ref:cfgProps"/>
+
+        <route id="logFileRoute">
             <from uri="file://{{log.dir}}?initialDelay=0&amp;delay=1"/>
-            <to uri="direct:logFile"/>
+            <to uri="direct:logParser"/>
         </route>
 
-        <route>
-            <from uri="direct:logFile"/>
+        <route id="logParserRoute">
+            <from uri="direct:logParser"/>
             <split streaming="true" parallelProcessing="true">
                 <method ref="logParser" method="iterator"/>
-                <to uri="direct:event"/>
+                <to uri="direct:eventMatcher"/>
             </split>
         </route>
 
-        <route>
-            <from uri="direct:event"/>
-            <setHeader headerName="matcher">
-                <method ref="ipdrEntryMatcher" method="matches"/>
-            </setHeader>
-            <choice>
-                <when>
-                    <simple>${in.header.matcher} != null</simple>
-                    <to uri="direct:processEntry"/>
-                </when>
-            </choice>
+        <route id="eventMatcherRoute">
+            <from uri="direct:eventMatcher"/>
+            <process ref="eventEntryMatcherProcessor"/>
+            <filter>
+                <simple>${in.header.EventEntryMatches} != null</simple>
+                <to uri="direct:processEntry"/>
+            </filter>
         </route>
 
-        <route>
+        <route id="processEntryRoute">
             <from uri="direct:processEntry"/>
-            <multicast strategyRef="mapAggregator" parallelProcessing="false">
-                <setBody>
-                    <method ref="matcher2Map" method="process"/>
-                </setBody>
-                <setBody>
-                    <method ref="logData2Map" method="process"/>
-                </setBody>
-                <setBody>
-                    <method ref="matches2Map" method="process"/>
-                </setBody>
-            </multicast>
+            <to uri="bean-validator://validateEventEntry"/>
             <to uri="vm:persist-events"/>
         </route>
+
     </camelContext>
+
 </beans>

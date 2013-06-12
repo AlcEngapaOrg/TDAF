@@ -18,7 +18,7 @@ public class PersistEventsRouteITest extends PersistEventsRouteTestSupport {
     public void integrationPersistEvent() throws Exception {
 
         // When
-        Object o = template.requestBody(getBodyAsMap());
+        Object o = template.requestBody(getBodyAsEventEntry());
 
         // Then
         assertTrue("Result is not of type WriteResult", o instanceof WriteResult);

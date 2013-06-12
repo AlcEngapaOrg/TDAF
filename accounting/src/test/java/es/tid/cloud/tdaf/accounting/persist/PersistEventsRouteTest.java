@@ -13,6 +13,8 @@ import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.WriteResult;
 
+import es.tid.cloud.tdaf.accounting.Constants;
+
 public class PersistEventsRouteTest extends PersistEventsRouteTestSupport {
 
     // Mock beans
@@ -24,12 +26,12 @@ public class PersistEventsRouteTest extends PersistEventsRouteTestSupport {
     public void doPreSetup() throws Exception {
         super.doPreSetup();
 
-        mongo = getMandatoryBean(Mongo.class, TestUtil.DB_CONNECTION);
-        accountingDb = getMandatoryBean(DB.class, TestUtil.DB);
-        eventsCollection = getMandatoryBean(DBCollection.class, TestUtil.COLLECTION);
+        mongo = getMandatoryBean(Mongo.class, Constants.MONGO_DB_CONNECTION);
+        accountingDb = getMandatoryBean(DB.class, Constants.MONGO_DB);
+        eventsCollection = getMandatoryBean(DBCollection.class, Constants.MONGO_COLLECTION);
 
-        when(mongo.getDB(TestUtil.DB)).thenReturn(accountingDb);
-        when(accountingDb.getCollection(TestUtil.COLLECTION)).thenReturn(eventsCollection);
+        when(mongo.getDB(Constants.MONGO_DB)).thenReturn(accountingDb);
+        when(accountingDb.getCollection(Constants.MONGO_COLLECTION)).thenReturn(eventsCollection);
     }
 
     @Test
@@ -40,7 +42,7 @@ public class PersistEventsRouteTest extends PersistEventsRouteTestSupport {
         when(eventsCollection.save(Matchers.any(DBObject.class))).thenReturn(wr);
 
         // When
-        Object o = template.requestBody(getBodyAsMap());
+        Object o = template.requestBody(getBodyAsEventEntry());
 
         // Then
         assertTrue("Result is not of type WriteResult", o instanceof WriteResult);

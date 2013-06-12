@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:util="http://www.springframework.org/schema/util"
@@ -14,14 +14,31 @@
         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <context:property-placeholder properties-ref="props"/>
+    <context:property-placeholder properties-ref="cfgProps"/>
+
+    <bean id="jacksonMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+        <property name="dateFormat">
+            <bean class="java.text.SimpleDateFormat">
+                <constructor-arg type="java.lang.String" value="yyyy-MM-dd'T'HH:mm:ss.SSSZ"/>
+            </bean>
+       </property>
+    </bean>
+
+    <bean id="jacksonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider">
+        <property name="mapper" ref="jacksonMapper" />
+    </bean>
+
+    <bean id="accountingResource" class="es.tid.cloud.tdaf.accounting.rest.resources.AccountingResourceImpl">
+        <constructor-arg ref="myDb"/>
+        <constructor-arg ref="jacksonMapper"/>
+    </bean>
 
     <jaxrs:server id="restService" address="${rest.baseURL}">
         <jaxrs:serviceBeans>
             <ref bean="accountingResource"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <ref bean="jacksonProvider"/>
         </jaxrs:providers>
         <jaxrs:features>
             <cxf:logging />
@@ -33,7 +50,7 @@
     serviceClass="es.tid.cloud.tdaf.accounting.rest.resources.AccountingResourceImpl"
     loggingFeatureEnabled="true" loggingSizeLimit="20" skipFaultLogging="false">
         <cxf-camel:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <ref bean="jacksonProvider"/>
         </cxf-camel:providers>
    </cxf-camel:rsServer>
 

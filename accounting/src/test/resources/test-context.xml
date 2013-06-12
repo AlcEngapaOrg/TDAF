@@ -5,12 +5,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+    <import resource="classpath:META-INF/spring/app-context.xml"/>
+    
     <!-- Accounting Properties -->
-    <bean id="props" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-        <property name="locations" value="conf/accounting.properties" />
+    <bean id="cfgProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations" value="conf/accounting.cfg" />
     </bean>
 
-    <context:property-placeholder properties-ref="props"/>
+    <context:property-placeholder properties-ref="cfgProps"/>
 
     <!-- We mock the Mongo -->
     <bean id="myDb" class="org.mockito.Mockito" factory-method="mock">
@@ -27,10 +29,12 @@
         <constructor-arg type="java.lang.Class" value="com.mongodb.DBCollection" />
     </bean>
 
-    <bean id="jsonProcessor" class="es.tid.cloud.tdaf.accounting.persist.processor.JsonProcessor"/>
-
-    <!-- Publish -->
-    <bean id="accountingResource" class="es.tid.cloud.tdaf.accounting.rest.resources.AccountingResourceImpl">
-        <constructor-arg ref="myDb"/>
+    <bean id="eventCSVParser" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg type="java.lang.Class" value="es.tid.cloud.tdaf.accounting.filtering.csv.EventCSVParser" />
     </bean>
+
+    <bean id="logParser" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg type="java.lang.Class" value="es.tid.cloud.tdaf.accounting.filtering.LogParser" />
+    </bean>
+
 </beans>

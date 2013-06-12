@@ -1,0 +1,12 @@
+##
+## CSV File .
+##
+## Accounting events
+## <serviceId>;<id>;<concept>;[<event>];<logPattern>[;<mode:OFFLINE|ONLINE>]
+
+InstantServer;addFirewallRule;FirewallRule;;".+CamelHttpUri=http://(?:[\d\.:]+)/i2cm/api/org/(?<orgId>[\w]+)/vdc/(?<vdcId>[\w]+)/fw/(?<fwId>[\w]+)/action/addFirewallRule.+CamelHttpMethod=POST.+Body:<tcloud-ecvdcm:AddFirewallRuleParams.+"
+InstantServer;createVDC;VDC;create;".+CamelHttpUri=http://(?:[\d\.:]+)/i2cm/api/org/(?<orgId>[\w]+)/vdc/action/instantiateVDC.+CamelHttpMethod=POST.+Body:<tcloud-ecvdcm:InstantiateVDCParams.+"
+InstantServer;deleteVAPP;VAPP;delete;".+CamelHttpMethod=DELETE.+CamelHttpUri=http://(?:[\d\.:]+)/i2cm/api/org/(?<orgId>[\w]+)/vdc,.+Body:\s.+"
+
+#Cosmos
+Cosmos;addFirewallRule;FirewallRule;;".+CamelHttpUri=http://(?:[\d\.:]+)/i2cm/api/org/(?<orgId>[\w]+)/vdc/(?<vdcId>[\w]+)/fw/(?<fwId>[\w]+)/action/addFirewallRule.+CamelHttpMethod=POST.+Body:<tcloud-ecvdcm:AddFirewallRuleParams.+"

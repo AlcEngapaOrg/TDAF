@@ -1,5 +1,6 @@
 package es.tid.cloud.tdaf.accounting.rest.resources;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -10,19 +11,17 @@ import javax.ws.rs.core.Response;
 
 @Path("/accounting")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public interface AccountingResource {
-
-    public final static String SERVICE_FIELD = "serviceId";
-    public final static String TIME_FIELD = "time";
 
     @GET
     @Path("/events")
     Response getAllEvents(@QueryParam("startDate") String startDate, @QueryParam("endDate") String endDate);
 
     @GET
-    @Path("/events/{id}")
+    @Path("/events/{serviceId}")
     Response findEvents(
-            @PathParam("id") String id,
+            @PathParam("serviceId") String serviceId,
             @QueryParam("startDate") String startDate, @QueryParam("endDate") String endDate);
 
 }

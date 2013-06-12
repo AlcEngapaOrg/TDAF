@@ -24,7 +24,7 @@ public class LogParser implements InitializingBean {
     private String dateFormat = null;
     private String customLevels = null;
     private Log4jPatternMultilineLogParser logParser = null;
-    
+
     class LogDataIterator implements Iterator<LogData> {
         private BufferedReader reader = null;
         private LogData logData = null;
@@ -39,7 +39,7 @@ public class LogParser implements InitializingBean {
             this.ctxt = new ParsingContext();
             this.ctxt.getCustomConextProperties().put("Log4jPatternMultilineLogParser.logEventProperties", new HashMap<String, String>());
         }
-        
+
         private String readLine() throws IOException {
             String line = reader.readLine();
             currentLine ++;
@@ -48,7 +48,7 @@ public class LogParser implements InitializingBean {
             }
             return line;
         }
-        
+
         private LogData parseBuffer() throws IOException, ParseException {
             LogData logData = null;
             this.reader.close();
@@ -57,7 +57,7 @@ public class LogParser implements InitializingBean {
             logData.setLine(Integer.toString(logDataLine));
             return logData;
         }
-        
+
         private LogData parseLine(String line) throws ParseException {
             LogData logData = null;
             logData = logParser.parse(line, ctxt);
@@ -145,7 +145,7 @@ public class LogParser implements InitializingBean {
     public void setCustomLevels(String customLevels) {
         this.customLevels = customLevels;
     }
-    
+
     public Iterator<LogData> iterator(@Body InputStream in) {
         return new LogDataIterator(in);
     }

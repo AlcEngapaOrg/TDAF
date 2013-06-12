@@ -10,27 +10,24 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.QueryBuilder;
 
+import es.tid.cloud.tdaf.accounting.Constants;
+
 public class AccountingResourceImpl implements AccountingResource {
 
-    private final static String DB = "accounting";
-    private final static String COLLECTION = "events";
-    public final static String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
-
-    private final ObjectMapper mapper = new ObjectMapper();
-
+    private ObjectMapper mapper;
     private Mongo mongo;
 
-    public AccountingResourceImpl(Mongo mongo) {
+    public AccountingResourceImpl(Mongo mongo, ObjectMapper mapper) {
         this.mongo = mongo;
+        this.mapper = mapper;
     }
 
     public Response getAllEvents(String startDate, String endDate) throws WebApplicationException{
@@ -42,37 +39,43 @@ public class AccountingResourceImpl implements AccountingResource {
     }
 
     @Override
-    public Response findEvents(String id, String startDate, String endDate) throws WebApplicationException{
-        Object returnedObject = getJSON(id, startDate, endDate);
+    public Response findEvents(String serviceId, String startDate, String endDate) throws WebApplicationException{
+        Object returnedObject = getJSON(serviceId, startDate, endDate);
         if(returnedObject == null){
             return Response.status(Status.NOT_FOUND).build();
         }
         return Response.ok(returnedObject).build();
     }
 
-    @SuppressWarnings({ "rawtypes"})
+    @SuppressWarnings("rawtypes")
     private Object getJSON(String serviceId, String startDate, String endDate) throws WebApplicationException {
         List<DBObject> andObjects = new ArrayList<DBObject>();
         try {
             if(startDate != null) {
-                andObjects.add(QueryBuilder.start(TIME_FIELD).greaterThanEquals(new SimpleDateFormat(DATE_FORMAT).parse(startDate)).get());
+                andObjects.add(QueryBuilder.start(Constants.TIME_FIELD)
+                        .greaterThanEquals(new SimpleDateFormat(Constants.DATE_FORMAT).parse(startDate)).get());
             }
             if(endDate != null){
-                andObjects.add(QueryBuilder.start(TIME_FIELD).lessThanEquals(new SimpleDateFormat(DATE_FORMAT).parse(endDate)).get());
+                andObjects.add(QueryBuilder.start(Constants.TIME_FIELD)
+                        .lessThanEquals(new SimpleDateFormat(Constants.DATE_FORMAT).parse(endDate)).get());
             }
         } catch (ParseException e) {
             throw new WebApplicationException(e, Status.BAD_REQUEST);
         }
         if(serviceId != null) {
-            andObjects.add(new BasicDBObject(SERVICE_FIELD ,serviceId));
+            andObjects.add(new BasicDBObject(Constants.SERVICE_FIELD ,serviceId));
         }
         DBCursor dbCursor = null;
         if(andObjects.size()>0) {
             DBObject query = QueryBuilder.start().and(andObjects.toArray(new BasicDBObject[andObjects.size()])).get();
-            dbCursor = mongo.getDB(DB).getCollection(COLLECTION).find(query);
+            dbCursor = mongo.getDB(Constants.MONGO_DB)
+                            .getCollection(Constants.MONGO_COLLECTION)
+                            .find(query);
         }
         else {
-            dbCursor = mongo.getDB(DB).getCollection(COLLECTION).find();
+            dbCursor = mongo.getDB(Constants.MONGO_DB)
+                    .getCollection(Constants.MONGO_COLLECTION)
+                    .find();
         }
         if(dbCursor.count()<1){
             return null;

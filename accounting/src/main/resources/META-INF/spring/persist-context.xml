@@ -8,13 +8,18 @@
                    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring" id="persistContext" >
-        <propertyPlaceholder id="persistProps" location="ref:props"/>
+
+        <propertyPlaceholder id="persistProps" location="ref:cfgProps"/>
+
         <route id="persistEventsRoute">
             <from uri="vm:persist-events"/>
-            <log message="Event Received :  ${body}" logName="stdout" loggingLevel="INFO"/>
-            <process ref="jsonProcessor"/>
+            <marshal>
+                <json library="Jackson" />
+            </marshal>
+            <convertBodyTo type="java.lang.String"/>
             <to uri="mongodb:myDb?database=accounting&amp;collection=events&amp;operation=save"/>
         </route>
 
     </camelContext>
+
 </beans>

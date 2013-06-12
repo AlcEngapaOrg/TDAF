@@ -1,0 +1,9 @@
+##
+## CSV File .
+##
+## Accounting events
+## <serviceId>;<id>;<concept>;[<event>];<logPattern>[;<mode:OFFLINE|ONLINE>]
+
+InstantServer;;123;addFirewallRule;FirewallRule;ADD;".+CamelHttpUri=http://(?:[\d\.:]+)/i2cm/api/org/(?<orgId>[\w]+)/vdc/(?<vdcId>[\w]+)/fw/(?<fwId>[\w]+)/action/addFirewallRule.+CamelHttpMethod=POST.+Body:<tcloud-ecvdcm:AddFirewallRuleParams.+"
+InstantServer;;;createVDC;VDC;CREATE;".+CamelHttpUri=http://(?:[\d\.:]+)/i2cm/api/org/(?<orgId>[\w]+)/vdc/action/instantiateVDC.+CamelHttpMethod=POST.+Body:<tcloud-ecvdcm:InstantiateVDCParams.+"
+InstantServer;4;$;$$;deleteVAPP;VAPP;DELETE;".+CamelHttpMethod=DELETE.+CamelHttpUri=http://(?:[\d\.:]+)/i2cm/api/org/(?<orgId>[\w]+)/vdc,.+Body:\s.+"
