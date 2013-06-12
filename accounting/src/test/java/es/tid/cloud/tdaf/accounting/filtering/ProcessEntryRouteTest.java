@@ -8,7 +8,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.component.bean.validator.BeanValidationException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -43,7 +42,6 @@ public class ProcessEntryRouteTest extends CamelSpringTestSupport {
         final DefaultCamelContext context = (DefaultCamelContext)super.createCamelContext();
         context.addComponent("vm", context.getComponent("mock"));
         context.getRouteDefinition("logFileRoute").autoStartup(false);
-        context.setErrorHandlerBuilder(new NoErrorHandlerBuilder());
         return context;
     }
 

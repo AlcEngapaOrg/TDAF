@@ -12,7 +12,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
-import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
@@ -57,7 +56,6 @@ public class EventMatcherRouteTest extends CamelSpringTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         final DefaultCamelContext context = (DefaultCamelContext)super.createCamelContext();
         context.getRouteDefinition("logFileRoute").autoStartup(false);
-        context.setErrorHandlerBuilder(new NoErrorHandlerBuilder());
         return context;
     }
 
