@@ -5,13 +5,16 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.commons.collections.map.MultiKeyMap;
 import org.junit.Test;
@@ -48,6 +51,14 @@ public class EventMatcherRouteTest extends CamelSpringTestSupport {
                         "classpath:META-INF/spring/filtering-context.xml",
                         "classpath:test-context.xml"
                 });
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        final DefaultCamelContext context = (DefaultCamelContext)super.createCamelContext();
+        context.getRouteDefinition("logFileRoute").autoStartup(false);
+        context.setErrorHandlerBuilder(new NoErrorHandlerBuilder());
+        return context;
     }
 
     @SuppressWarnings("unchecked")
