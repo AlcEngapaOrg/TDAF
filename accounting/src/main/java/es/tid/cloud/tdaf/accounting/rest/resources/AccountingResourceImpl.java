@@ -1,8 +1,8 @@
 package es.tid.cloud.tdaf.accounting.rest.resources;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -48,18 +48,20 @@ public class AccountingResourceImpl implements AccountingResource {
     }
 
     @SuppressWarnings("rawtypes")
-    private Object getJSON(String serviceId, String startDate, String endDate) throws WebApplicationException {
+    private Object getJSON(String serviceId, String sStartDate, String sEndDate) throws WebApplicationException {
         List<DBObject> andObjects = new ArrayList<DBObject>();
         try {
-            if(startDate != null) {
+            if(sStartDate != null) {
+                Date startDate = new SimpleDateFormat(Constants.DATE_FORMAT).parse(sStartDate);
                 andObjects.add(QueryBuilder.start(Constants.TIME_FIELD)
-                        .greaterThanEquals(new SimpleDateFormat(Constants.DATE_FORMAT).parse(startDate)).get());
+                        .greaterThanEquals(new SimpleDateFormat(Constants.DATE_FORMAT).format(startDate)).get());
             }
-            if(endDate != null){
+            if(sEndDate != null){
+                Date endDate = new SimpleDateFormat(Constants.DATE_FORMAT).parse(sEndDate);
                 andObjects.add(QueryBuilder.start(Constants.TIME_FIELD)
-                        .lessThanEquals(new SimpleDateFormat(Constants.DATE_FORMAT).parse(endDate)).get());
+                        .lessThanEquals(new SimpleDateFormat(Constants.DATE_FORMAT).format(endDate)).get());
             }
-        } catch (ParseException e) {
+        } catch (Exception e) {
             throw new WebApplicationException(e, Status.BAD_REQUEST);
         }
         if(serviceId != null) {

@@ -67,4 +67,5 @@ public class EventEntry extends EventBase implements Serializable {
     public void setTime(Date time) {
         this.time = time;
     }
+
 }

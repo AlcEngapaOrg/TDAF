@@ -1,4 +1,4 @@
-package es.tid.cloud.tdaf.accounting.rest;
+package es.tid.cloud.tdaf.accounting.publish;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -61,7 +61,10 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
     DBCursor dbCursor;
     DBCollection eventsCollection;
 
-    ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    ObjectMapper mapper;
+    @Autowired
+    JacksonJsonProvider jacksonJsonProvider;
 
     @BeforeClass
     public static void setupUrls() {
@@ -80,7 +83,6 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
         eventsCollection = Mockito.mock(DBCollection.class);
         when(mongo.getDB(Constants.MONGO_DB)).thenReturn(accountingDb);
         when(accountingDb.getCollection(Constants.MONGO_COLLECTION)).thenReturn(eventsCollection);
-        
     }
 
     @Test
@@ -95,7 +97,7 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
         //When
         AccountingResource accountingResource = JAXRSClientFactory.create(System.getProperty(REST_URL) ,
                 AccountingResource.class, 
-                Collections.singletonList(new JacksonJsonProvider()));
+                Collections.singletonList(jacksonJsonProvider));
 
         Response response = accountingResource.getAllEvents(null, null);
 
@@ -117,7 +119,7 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
         //When
         AccountingResource accountingResource = JAXRSClientFactory.create(System.getProperty(REST_URL) ,
                 AccountingResource.class, 
-                Collections.singletonList(new JacksonJsonProvider()));
+                Collections.singletonList(jacksonJsonProvider));
 
         Response response = accountingResource.getAllEvents(null, null);
 
@@ -139,7 +141,7 @@ public class PublishContextTest extends AbstractJUnit4SpringContextTests {
         //When
         AccountingResource accountingResource = JAXRSClientFactory.create(System.getProperty(REST_URL) ,
                 AccountingResource.class, 
-                Collections.singletonList(new JacksonJsonProvider()));
+                Collections.singletonList(jacksonJsonProvider));
 
         Response response = accountingResource.findEvents("InstantServer", null, null);
 

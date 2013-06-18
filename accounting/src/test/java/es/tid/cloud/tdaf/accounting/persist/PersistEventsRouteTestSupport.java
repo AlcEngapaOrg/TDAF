@@ -1,6 +1,5 @@
 package es.tid.cloud.tdaf.accounting.persist;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,7 +47,7 @@ public abstract class PersistEventsRouteTestSupport extends CamelSpringTestSuppo
         Map<String, Object> eventInfo = new HashMap<String, Object>();
         eventInfo.put("key1", "simpleText");
         eventInfo.put("key2", Arrays.asList(new String[] {"1","2"}));
-        eventInfo.put("key3", SimpleDateFormat.getInstance().format(new Date()));
+        eventInfo.put("key3", new Date());
         eventEntry.setEventInfo(eventInfo);
 
         Map<String, Object> logDetails = new HashMap<String, Object>();

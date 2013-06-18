@@ -7,15 +7,18 @@
                    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+    <bean id="jacksonDataFormat" class="org.apache.camel.component.jackson.JacksonDataFormat">
+        <constructor-arg type="com.fasterxml.jackson.databind.ObjectMapper" ref="jacksonMapper"/>
+        <constructor-arg type="java.lang.Class" value="es.tid.cloud.tdaf.accounting.model.EventEntry"/>
+    </bean>
+
     <camelContext xmlns="http://camel.apache.org/schema/spring" id="persistContext" >
 
         <propertyPlaceholder id="persistProps" location="ref:cfgProps"/>
 
         <route id="persistEventsRoute">
             <from uri="vm:persist-events"/>
-            <marshal>
-                <json library="Jackson" />
-            </marshal>
+            <marshal ref="jacksonDataFormat"/>
             <convertBodyTo type="java.lang.String"/>
             <to uri="mongodb:myDb?database=accounting&amp;collection=events&amp;operation=save"/>
         </route>
